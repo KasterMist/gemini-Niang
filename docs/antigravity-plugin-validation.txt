@@ -1,0 +1,5 @@
+Validating gemini-niang (antigravity\plugin.json)
+
+  skills 0 · agents 0 · rules 0 · hooks 1 · mcpServers 1 · sidecars 0
+
+✔ Validation passed

@@ -2,9 +2,35 @@
 
 基于 [T7moris/GPT-Niang](https://github.com/T7moris/GPT-Niang) 的非官方社区 Fork。
 
-**当前交付：Gemini 娘视觉与动画原型 v0.1.1。** 依据用户提供的三视图，制作透明半身/全身素材、六种姿态、循环 GIF 与动作选择。半身现为大头肩胸近景、简化线条风格，详见[本轮修订](docs/bust-v011-revision.md)。
+**当前交付：Gemini 娘 Windows 桌面适配开发版 v0.2.0。** 包含独立桌面挂件、Antigravity 官方 CLI 额度读取、MCP 工具及 Stop 完成事件桥。角色素材沿用 v0.1.1 的半身近景与全身六姿态，详见[形象修订](docs/bust-v011-revision.md)。
 
-> 尚未完成 Antigravity 运行集成。原有 `安装GPT娘.cmd` 等脚本仍是上游 Codex 安装器，不是 Gemini 娘安装器。本轮不修改本机已安装的 GPT 娘，也不读取账号或额度。
+> 开发版：真实 CLI 只读额度查询、官方插件严格校验、WPF 进程与模拟完成事件测试已通过；真实聊天 Stop 回调、窗口跟随的交互/多屏效果仍待实机验收。本轮未自动安装全局插件，不修改本机已安装的 GPT 娘。旧 `安装GPT娘.cmd` 仍是 Codex 安装器；新入口为 `安装Gemini娘.cmd`。
+
+## Windows 桌面挂件与 Antigravity
+
+需要 Windows 10/11、Node.js 20+、Antigravity App，以及已登录相同账户的 Antigravity CLI 1.1.11+。
+
+1. 将完整仓库保存在长期目录。
+2. 双击 **`安装Gemini娘.cmd`**：显式配置 Gemini 娘；缺少 CLI 时下载官方二进制并校验 SHA512，注册本地 Antigravity 插件，然后启动挂件。不改 PATH、计划任务或开机启动。
+3. 打开/还原 Antigravity 主窗口；默认跟随模式在主窗口最小化或关闭时隐藏挂件。单击角色查看额度、拖动移动、右键切换形态/动作/大小/桌面模式。
+4. 插件安装后，已有聊天可能需要重新加载或新建聊天才会加载 MCP 与 Stop hook。
+
+只验证、不注册插件：
+
+```powershell
+.\scripts\Install-GeminiNiang.ps1 -AgyPath 'C:\path\to\agy.exe' -CheckOnly
+```
+
+只配置本地桌面程序、不注册全局插件：
+
+```powershell
+.\scripts\Install-GeminiNiang.ps1 -AgyPath 'C:\path\to\agy.exe'
+.\打开Gemini娘.cmd
+```
+
+`停用Gemini娘.cmd` 请求退出挂件并移除 `gemini-niang` 插件，保留偏好。默认状态目录 `%LOCALAPPDATA%\GeminiNiang\state`，与 GPT 娘隔离。更换已有配置前会备份；恢复说明见[适配验收](docs/antigravity-validation.md)。
+
+额度仅调用 `agy -p "/usage" --output-format json`；不创建模型任务，不读取/保存登录令牌或聊天正文。失败与过期显示不可用，不沿用旧余额；1970重置时间视为未知。完成通知仅在 `model_stop` 且 `fullyIdle=true` 时触发，非逐次模型调用提醒。远程机器/云端运行的 hook 不会自动通知本地桌面。
 
 | 半身 · 招手 | 全身 · 待机 |
 | --- | --- |

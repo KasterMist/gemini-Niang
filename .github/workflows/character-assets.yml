@@ -1,14 +1,17 @@
 name: Gemini character assets
 on:
   push:
-    paths: ['assets/characters/gemini/**', 'preview/**', 'scripts/build-character.mjs', 'scripts/preview-server.mjs', 'tests/**', 'package*.json', '.github/workflows/character-assets.yml']
+    paths: ['assets/characters/gemini/**', 'antigravity/**', 'desktop/**', 'preview/**', 'scripts/**', 'tests/**', 'package*.json', '.github/workflows/character-assets.yml']
   pull_request:
-    paths: ['assets/characters/gemini/**', 'preview/**', 'scripts/**', 'tests/**', 'package*.json', '.github/workflows/character-assets.yml']
+    paths: ['assets/characters/gemini/**', 'antigravity/**', 'desktop/**', 'preview/**', 'scripts/**', 'tests/**', 'package*.json', '.github/workflows/character-assets.yml']
 permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

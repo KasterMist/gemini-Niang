@@ -1,0 +1,5 @@
+{
+  "gemini-niang-completion": {
+    "Stop": [{ "type": "command", "command": "node ./scripts/stop-hook.mjs", "timeout": 5 }]
+  }
+}
