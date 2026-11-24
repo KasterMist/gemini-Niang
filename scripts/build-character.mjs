@@ -10,8 +10,14 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const out = path.join(root, 'assets/characters/gemini');
 await mkdir(path.join(out, 'png'), { recursive: true });
 await mkdir(path.join(out, 'gif'), { recursive: true });
-const manifest = { id: 'gemini-niang', version: '0.1.0', animationType: 'pose-atlas-with-procedural-motion', cycleSeconds: 4, cellSize: 512, gif: { width: 320, height: 320, frames: 40, fps: 10, loop: true }, actions: ACTIONS, views: {}, sourceSha256: {} };
-for (const view of ['full', 'bust']) {
+const viewArg = process.argv.find(a => a.startsWith('--view='))?.slice(7);
+if (viewArg && !['full', 'bust'].includes(viewArg)) throw new Error('Use --view=full or --view=bust');
+const views = viewArg ? [viewArg] : ['full', 'bust'];
+const manifest = viewArg
+  ? JSON.parse(await readFile(path.join(out, 'character.json'), 'utf8'))
+  : { id: 'gemini-niang', animationType: 'pose-atlas-with-procedural-motion', cycleSeconds: 4, cellSize: 512, gif: { width: 320, height: 320, frames: 40, fps: 10, loop: true }, actions: ACTIONS, views: {}, sourceSha256: {} };
+manifest.version = '0.1.1';
+for (const view of views) {
   const source = await readFile(path.join(out, `${view}-atlas.png`));
   manifest.sourceSha256[view] = createHash('sha256').update(source).digest('hex');
   const meta = await sharp(source).metadata();
@@ -59,4 +65,4 @@ for (const view of ['full', 'bust']) {
   }
 }
 await writeFile(path.join(out, 'character.json'), JSON.stringify(manifest, null, 2) + '\n');
-console.log('Wrote 12 registered PNGs, 12 animated GIFs and character.json.');
+console.log(`Wrote ${views.length * 6} registered PNGs, ${views.length * 6} animated GIFs and character.json.`);

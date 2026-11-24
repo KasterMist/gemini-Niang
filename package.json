@@ -1,6 +1,6 @@
 {
   "name": "gemini-niang",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Gemini-Niang character assets and procedural animation studio; fork of GPT-Niang",
   "scripts": {
     "preview": "node scripts/preview-server.mjs",

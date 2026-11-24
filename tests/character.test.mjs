@@ -32,7 +32,7 @@ test('atlases and manifest retain real alpha and source hashes', async () => {
     assert.equal(info.width, 1536); assert.equal(info.height, 1024);
     let transparent = 0, visible = 0;
     for (let i = 3; i < data.length; i += 4) { transparent += data[i] === 0; visible += data[i] >= 240; }
-    assert.ok(transparent > 500000 && visible > 200000);
+    assert.ok(transparent > info.width * info.height * .1 && visible > 200000);
   }
 });
 for (const view of ['full', 'bust']) for (const a of ACTIONS) {

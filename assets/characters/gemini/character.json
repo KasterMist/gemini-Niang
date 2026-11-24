@@ -1,6 +1,6 @@
 {
   "id": "gemini-niang",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "animationType": "pose-atlas-with-procedural-motion",
   "cycleSeconds": 4,
   "cellSize": 512,
@@ -86,27 +86,27 @@
       "registrations": [
         {
           "action": "idle",
-          "shiftX": -24
+          "shiftX": 1
         },
         {
           "action": "blink",
-          "shiftX": 8
+          "shiftX": 1
         },
         {
           "action": "wave",
-          "shiftX": 40
+          "shiftX": 0
         },
         {
           "action": "happy",
-          "shiftX": -24
+          "shiftX": 1
         },
         {
           "action": "think",
-          "shiftX": 8
+          "shiftX": 1
         },
         {
           "action": "sleep",
-          "shiftX": 40
+          "shiftX": 1
         }
       ],
       "png": "png/bust-{action}.png",
@@ -115,6 +115,6 @@
   },
   "sourceSha256": {
     "full": "19433fc2390abee58288cce40e79c15d7144aef9f7d5d20e56686e9605449e61",
-    "bust": "f32fbb50cc48136caa91dea4b2b63750ef25576f3954308c880f8bcc9e6983ec"
+    "bust": "ea453eb7910d63809b7320041460d7c3b0a9e534b9456ff81a9d4e3b671cd97e"
   }
 }

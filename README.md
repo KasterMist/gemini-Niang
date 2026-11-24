@@ -2,7 +2,7 @@
 
 基于 [T7moris/GPT-Niang](https://github.com/T7moris/GPT-Niang) 的非官方社区 Fork。
 
-**当前交付：Gemini 娘视觉与动画原型 v0.1.0。** 依据用户提供的三视图，制作透明半身/全身素材、六种姿态、循环 GIF 与动作选择。
+**当前交付：Gemini 娘视觉与动画原型 v0.1.1。** 依据用户提供的三视图，制作透明半身/全身素材、六种姿态、循环 GIF 与动作选择。半身现为大头肩胸近景、简化线条风格，详见[本轮修订](docs/bust-v011-revision.md)。
 
 > 尚未完成 Antigravity 运行集成。原有 `安装GPT娘.cmd` 等脚本仍是上游 Codex 安装器，不是 Gemini 娘安装器。本轮不修改本机已安装的 GPT 娘，也不读取账号或额度。
 

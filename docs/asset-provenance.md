@@ -26,3 +26,6 @@ Image1 identity reference, Image2 full-body atlas as art-style reference. HALF B
 build-character.mjs按512px网格分帧，通过可见alpha边界水平对齐，使用motionAt的变换合成40帧GIF。只做导出、对齐、缩放与动画编码，不以程序替代形象绘制。PNG保留alpha；GIF为256色、单比特透明。
 
 动图中的呼吸/摇摆为整体变换，非手臂/尾巴独立骨骼运动。
+
+## 半身 v0.1.1 更新
+原半身生成规格为历史记录；当前采用大头肩胸近景版。新参考、提示词规格、原始SHA256及验证见 [半身修订记录](bust-v011-revision.md)。

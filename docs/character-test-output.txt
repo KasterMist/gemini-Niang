@@ -1,22 +1,22 @@
 
-> gemini-niang@0.1.0 test
+> gemini-niang@0.1.1 test
 > node --test tests/*.test.mjs
 
-✔ six actions, deterministic finite periodic motion, reduced-motion support (2.7417ms)
-✔ atlases and manifest retain real alpha and source hashes (64.4061ms)
-✔ full/idle: PNG and genuine looping multi-frame GIF (51.2368ms)
-✔ full/blink: PNG and genuine looping multi-frame GIF (43.1687ms)
-✔ full/wave: PNG and genuine looping multi-frame GIF (41.0602ms)
-✔ full/happy: PNG and genuine looping multi-frame GIF (44.6868ms)
-✔ full/think: PNG and genuine looping multi-frame GIF (39.6369ms)
-✔ full/sleep: PNG and genuine looping multi-frame GIF (42.7842ms)
-✔ bust/idle: PNG and genuine looping multi-frame GIF (46.5031ms)
-✔ bust/blink: PNG and genuine looping multi-frame GIF (44.6905ms)
-✔ bust/wave: PNG and genuine looping multi-frame GIF (44.0751ms)
-✔ bust/happy: PNG and genuine looping multi-frame GIF (42.1139ms)
-✔ bust/think: PNG and genuine looping multi-frame GIF (47.994ms)
-✔ bust/sleep: PNG and genuine looping multi-frame GIF (45.4616ms)
-✔ root redirects and all browser assets/downloads are served (247.8954ms)
+✔ six actions, deterministic finite periodic motion, reduced-motion support (2.1992ms)
+✔ atlases and manifest retain real alpha and source hashes (63.0575ms)
+✔ full/idle: PNG and genuine looping multi-frame GIF (53.2743ms)
+✔ full/blink: PNG and genuine looping multi-frame GIF (44.1737ms)
+✔ full/wave: PNG and genuine looping multi-frame GIF (41.6487ms)
+✔ full/happy: PNG and genuine looping multi-frame GIF (43.2328ms)
+✔ full/think: PNG and genuine looping multi-frame GIF (40.8081ms)
+✔ full/sleep: PNG and genuine looping multi-frame GIF (40.1539ms)
+✔ bust/idle: PNG and genuine looping multi-frame GIF (46.3814ms)
+✔ bust/blink: PNG and genuine looping multi-frame GIF (44.9986ms)
+✔ bust/wave: PNG and genuine looping multi-frame GIF (42.6504ms)
+✔ bust/happy: PNG and genuine looping multi-frame GIF (43.0746ms)
+✔ bust/think: PNG and genuine looping multi-frame GIF (46.6285ms)
+✔ bust/sleep: PNG and genuine looping multi-frame GIF (43.2417ms)
+✔ root redirects and all browser assets/downloads are served (222.8294ms)
 ℹ tests 15
 ℹ suites 0
 ℹ pass 15
@@ -24,4 +24,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 713.6546
+ℹ duration_ms 698.3422
