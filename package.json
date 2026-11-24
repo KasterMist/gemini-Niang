@@ -1,0 +1,28 @@
+{
+  "name": "gemini-niang",
+  "version": "0.1.0",
+  "description": "Gemini-Niang character assets and procedural animation studio; fork of GPT-Niang",
+  "scripts": {
+    "preview": "node scripts/preview-server.mjs",
+    "build:character": "node scripts/build-character.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KasterMist/gemini-Niang.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/KasterMist/gemini-Niang/issues"
+  },
+  "homepage": "https://github.com/KasterMist/gemini-Niang#readme",
+  "devDependencies": {
+    "gifenc": "^1.0.3",
+    "omggif": "^1.0.10",
+    "sharp": "^0.35.5"
+  },
+  "private": true
+}

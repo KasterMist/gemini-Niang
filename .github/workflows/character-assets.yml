@@ -1,0 +1,19 @@
+name: Gemini character assets
+on:
+  push:
+    paths: ['assets/characters/gemini/**', 'preview/**', 'scripts/build-character.mjs', 'scripts/preview-server.mjs', 'tests/**', 'package*.json', '.github/workflows/character-assets.yml']
+  pull_request:
+    paths: ['assets/characters/gemini/**', 'preview/**', 'scripts/**', 'tests/**', 'package*.json', '.github/workflows/character-assets.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test

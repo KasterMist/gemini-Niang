@@ -1,0 +1,120 @@
+{
+  "id": "gemini-niang",
+  "version": "0.1.0",
+  "animationType": "pose-atlas-with-procedural-motion",
+  "cycleSeconds": 4,
+  "cellSize": 512,
+  "gif": {
+    "width": 320,
+    "height": 320,
+    "frames": 40,
+    "fps": 10,
+    "loop": true
+  },
+  "actions": [
+    {
+      "id": "idle",
+      "label": "待机",
+      "cell": 0,
+      "note": "轻呼吸 · 定时眨眼"
+    },
+    {
+      "id": "blink",
+      "label": "眨眼",
+      "cell": 1,
+      "note": "睁眼 / 闭眼帧循环"
+    },
+    {
+      "id": "wave",
+      "label": "招手",
+      "cell": 2,
+      "note": "招手姿态 · 整体轻摇"
+    },
+    {
+      "id": "happy",
+      "label": "开心",
+      "cell": 3,
+      "note": "庆祝姿态 · 小幅弹跳"
+    },
+    {
+      "id": "think",
+      "label": "思考",
+      "cell": 4,
+      "note": "托腮姿态 · 轻轻侧倾"
+    },
+    {
+      "id": "sleep",
+      "label": "困倦",
+      "cell": 5,
+      "note": "闭眼姿态 · 慢呼吸"
+    }
+  ],
+  "views": {
+    "full": {
+      "atlas": "full-atlas.png",
+      "registrations": [
+        {
+          "action": "idle",
+          "shiftX": -14
+        },
+        {
+          "action": "blink",
+          "shiftX": 2
+        },
+        {
+          "action": "wave",
+          "shiftX": 16
+        },
+        {
+          "action": "happy",
+          "shiftX": -14
+        },
+        {
+          "action": "think",
+          "shiftX": 2
+        },
+        {
+          "action": "sleep",
+          "shiftX": 15
+        }
+      ],
+      "png": "png/full-{action}.png",
+      "gif": "gif/full-{action}.gif"
+    },
+    "bust": {
+      "atlas": "bust-atlas.png",
+      "registrations": [
+        {
+          "action": "idle",
+          "shiftX": -24
+        },
+        {
+          "action": "blink",
+          "shiftX": 8
+        },
+        {
+          "action": "wave",
+          "shiftX": 40
+        },
+        {
+          "action": "happy",
+          "shiftX": -24
+        },
+        {
+          "action": "think",
+          "shiftX": 8
+        },
+        {
+          "action": "sleep",
+          "shiftX": 40
+        }
+      ],
+      "png": "png/bust-{action}.png",
+      "gif": "gif/bust-{action}.gif"
+    }
+  },
+  "sourceSha256": {
+    "full": "19433fc2390abee58288cce40e79c15d7144aef9f7d5d20e56686e9605449e61",
+    "bust": "f32fbb50cc48136caa91dea4b2b63750ef25576f3954308c880f8bcc9e6983ec"
+  }
+}
