@@ -49,3 +49,5 @@ quote-editor.png、custom-quote.png、menu.png、shapes.png、quota.png、long-q
 ## 阶段提交与 CI
 
 第一阶段已推送 8ce625e（语录/场景/定位主体），最终验收另行提交。上个正式版本 6e6df55 的 Gemini 和上游 Windows/macOS 两个 CI 均已成功；新版本状态以对应提交的实际工作流为准。
+
+最终代码与验收提交 3174a16 已推送；该提交的 Gemini character assets（Windows/Linux）CI 已成功，上游遗留全量工作流仍在运行。后续文档修订不改变已测试的代码。
