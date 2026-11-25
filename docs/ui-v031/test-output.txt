@@ -1,0 +1,59 @@
+
+> gemini-niang@0.3.1 test
+> node --test tests/*.test.mjs
+
+✔ real CLI 1.5 response shape maps fractions, reset epoch and drops private fields (1.379ms)
+✔ reject model-generated answers, nonzero turns and unknown response shapes (0.1624ms)
+✔ reject invalid fractions without silently clamping (0.1276ms)
+✔ zero quota and absent reset are valid, empty groups do not invent quotas (0.4853ms)
+✔ provider only spawns fixed read-only usage args with no shell (0.2899ms)
+✔ provider failure modes discard possible secrets from CLI output (0.2238ms)
+✔ actual missing executable is a clean unavailable state (2.6241ms)
+✔ Stop completion requires final successful idle, not every model invocation (0.4389ms)
+✔ completion events atomically deduplicate concurrent hooks and retain only sanitized payload (24.0231ms)
+✔ completion spool is bounded to 128 event files (175.3919ms)
+✔ App executionNum resets to zero: changed transcript metadata identifies repeated user turns (7.6666ms)
+✔ hook process always returns empty JSON and does not force agent continuation (234.6734ms)
+✔ atomic state updates replace files on Windows and preserve valid JSON (4.7061ms)
+✔ MCP process handshake, list and unavailable-CLI tool call (76.7359ms)
+✔ plugin configuration is self-contained, uses correct hook shape, no credential declaration (1.241ms)
+✔ Windows PowerShell 5 syntax and native preflight (389.6923ms)
+✔ Windows WPF process loads real assets and reacts to a simulated Stop hook (3249.0712ms)
+✔ Windows launch scripts use UTF-8 BOM and plugin registration is opt-in (1.1477ms)
+✔ six actions, deterministic finite periodic motion, reduced-motion support (2.5629ms)
+✔ atlases and manifest retain real alpha and source hashes (130.3153ms)
+✔ full/idle: PNG and genuine looping multi-frame GIF (53.5217ms)
+✔ full/blink: PNG and genuine looping multi-frame GIF (43.2437ms)
+✔ full/wave: PNG and genuine looping multi-frame GIF (45.8659ms)
+✔ full/happy: PNG and genuine looping multi-frame GIF (44.7966ms)
+✔ full/think: PNG and genuine looping multi-frame GIF (43.6571ms)
+✔ full/sleep: PNG and genuine looping multi-frame GIF (45.3414ms)
+✔ bust/idle: PNG and genuine looping multi-frame GIF (48.0483ms)
+✔ bust/blink: PNG and genuine looping multi-frame GIF (46.6139ms)
+✔ bust/wave: PNG and genuine looping multi-frame GIF (49.7163ms)
+✔ bust/happy: PNG and genuine looping multi-frame GIF (44.4754ms)
+✔ bust/think: PNG and genuine looping multi-frame GIF (45.4849ms)
+✔ bust/sleep: PNG and genuine looping multi-frame GIF (50.4301ms)
+✔ side/idle: PNG and genuine looping multi-frame GIF (36.5027ms)
+✔ side/blink: PNG and genuine looping multi-frame GIF (37.8355ms)
+✔ side/wave: PNG and genuine looping multi-frame GIF (36.8645ms)
+✔ side/happy: PNG and genuine looping multi-frame GIF (41.365ms)
+✔ side/think: PNG and genuine looping multi-frame GIF (37.9137ms)
+✔ side/sleep: PNG and genuine looping multi-frame GIF (35.6248ms)
+✔ back/idle: PNG and genuine looping multi-frame GIF (39.4691ms)
+✔ back/blink: PNG and genuine looping multi-frame GIF (41.9041ms)
+✔ back/wave: PNG and genuine looping multi-frame GIF (37.9107ms)
+✔ back/happy: PNG and genuine looping multi-frame GIF (39.2008ms)
+✔ back/think: PNG and genuine looping multi-frame GIF (39.625ms)
+✔ back/sleep: PNG and genuine looping multi-frame GIF (41.4245ms)
+✔ upstream bubble and menu templates retain attribution and real visual controls (3.265ms)
+✔ Windows WPF themed UI scenes, menus and preference actions (1218.9825ms)
+✔ root redirects and all browser assets/downloads are served (370.4371ms)
+ℹ tests 47
+ℹ suites 0
+ℹ pass 47
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4240.4901

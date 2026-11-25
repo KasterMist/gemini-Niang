@@ -2,9 +2,19 @@
 
 基于 [T7moris/GPT-Niang](https://github.com/T7moris/GPT-Niang) 的非官方社区 Fork。
 
-**当前交付：Gemini 娘 Windows 桌面适配开发版 v0.3.0。** 包含独立桌面挂件、Antigravity 官方 CLI 额度读取、MCP 工具及 Stop 完成事件桥。角色素材沿用 v0.1.1 的半身近景与正面/侧面/背面全身六姿态，详见[形象修订](docs/bust-v011-revision.md)。
+**当前交付：Gemini 娘 Windows 桌面适配开发版 v0.3.1。** 包含独立桌面挂件、Antigravity 官方 CLI 额度读取、MCP 工具及 Stop 完成事件桥。角色素材沿用 v0.1.1 的半身近景与正面/侧面/背面全身六姿态，详见[形象修订](docs/bust-v011-revision.md)。
 
-> v0.3.0 已在授权本机安装启用：真实 Antigravity App 聊天→Stop→正式桌面挂件开心动作/气泡链路通过，最小化隐藏/还原恢复通过；45项本地测试通过。物理多屏/DPI及精细绑定仍待完善。旧 `安装GPT娘.cmd` 是 Codex 安装器；新入口为 `安装Gemini娘.cmd`。详细记录见[本轮验收](docs/v030-validation.md)。
+> v0.3.1 直接复用上游思考气泡 XAML 与紫色菜单模板，保留现有角色资源，接入 Antigravity 模型组选择。47 项本地测试通过，含 23 个 WPF UI 断言。真实 App 额度显示已观察；本轮未追加真实模型消息。详见 [UI 验收](docs/ui-v031/validation.md)，之前的完成通知联调见 [v0.3.0 验收](docs/v030-validation.md)。旧 `安装GPT娘.cmd` 仍是 Codex 安装器，新入口为 `安装Gemini娘.cmd`。
+
+## 桌面 UI
+
+下图为真实 WPF 控件渲染，额度为合成测试数据，不是账户余额。
+
+| 思考气泡与角色 | 紫色分组菜单 |
+| --- | --- |
+| ![额度气泡](docs/ui-v031/quota.png) | ![设置菜单](docs/ui-v031/menu.png) |
+
+已接入形态/动作选择、整体大小、模型组、台词切换、完成提醒开关和跟随模式；声音、音乐律动、自定义语录编辑及上游自动更新尚未移植，不显示空功能入口。
 
 ## Windows 桌面挂件与 Antigravity
 

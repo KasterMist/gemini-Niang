@@ -27,6 +27,7 @@ $script:window.Show()
 try {
   Write-Json (Join-Path $StateDir 'usage.json') $usage;Update-Status;Sync-GeminiMenu
   Assert-Ui ($script:ui.ShortLeft.Text-eq '100%') '5h percentage'
+  Assert-Ui ($script:ui.Header.Text-eq 'Gemini 剩余额度') 'selected model group visible in header'
   Assert-Ui ($script:ui.WeekLeft.Text-eq '69%') 'weekly percentage'
   Assert-Ui ($script:ui.ShortBar.Width-eq 184) 'progress width 100 percent'
   Assert-Ui ($script:ui.ShortReset.Text-eq '重置时间未知') 'unknown reset is explicit'
@@ -34,6 +35,7 @@ try {
   Assert-Ui ($script:menu.Items[0].Style-eq $script:menuResources['SettingsItem']) 'upstream styled menu applied'
   if($CaptureDir){$null=New-Item -ItemType Directory -Path $CaptureDir -Force;Render-Ui $script:window.Content (Join-Path $CaptureDir 'quota.png')}
   Click-Item $script:groupMenu.Items[1]
+  Assert-Ui ($script:ui.Header.Text-eq 'Claude / GPT 额度') 'switched group visible in header'
   Assert-Ui ($script:ui.WeekLeft.Text-eq '0%') 'model group switch preserves zero'
   Assert-Ui ($script:ui.ShortLeft.Text-eq '—') 'missing window not fabricated'
   Assert-Ui ($script:ui.ShortBar.Width-eq 0) 'missing window clears progress'
@@ -61,6 +63,11 @@ try {
   $usage.observedAt=[DateTime]::UtcNow.ToString('o');Write-Json (Join-Path $StateDir 'usage.json') $usage;Update-Status;Sync-GeminiMenu
   $script:menu.PlacementTarget=$script:ui.MenuButton;$script:menu.Placement='Left';$script:menu.IsOpen=$true;$script:menu.UpdateLayout()
   if($CaptureDir){Render-Ui $script:menu (Join-Path $CaptureDir 'menu.png')}
+  $script:shapeMenu.IsSubmenuOpen=$true;$script:shapeMenu.UpdateLayout()
+  $popup=$script:shapeMenu.Template.FindName('PART_Popup',$script:shapeMenu)
+  Assert-Ui ($popup.IsOpen -and $popup.Child.ActualWidth-ge 280) 'styled submenu opens with real content'
+  if($CaptureDir){Render-Ui $popup.Child (Join-Path $CaptureDir 'shapes.png')}
+  $script:shapeMenu.IsSubmenuOpen=$false
   $script:menu.IsOpen=$false
   Write-Json (Join-Path $StateDir 'ui-validation.json') @{ok=$true;checks=$script:checks.ToArray();quotaSource='synthetic UI fixture, not account quota'}
   "UI checks passed: $($script:checks.Count)"

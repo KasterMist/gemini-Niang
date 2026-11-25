@@ -1,0 +1,30 @@
+{
+  "baselineCommit": "a51d9a16aafb515edde3895d1d4ae53488b57108",
+  "baselineDesktopSha256": "44c6e2a24bcb350d41a8202d15963834c75a8aaca3522f485f712954a9dd928a",
+  "files": [
+    {
+      "path": "desktop/widget.xaml",
+      "sha256": "e093eab3572f6a76ef6f38de92135cf700f78afed0edfe491acfd841401f0366"
+    },
+    {
+      "path": "desktop/menu-resources.xaml",
+      "sha256": "e435a40697ef00b213d40429be3d135b76b796a80459a2a780ad12a987437860"
+    },
+    {
+      "path": "desktop/ui.ps1",
+      "sha256": "5ac235db527252a10453da16e4bd81b662adf2b58cf88cb442fb7f0785d6d54f"
+    },
+    {
+      "path": "desktop/GeminiNiang.ps1",
+      "sha256": "86d1133d3a7098af211cb63f0fe45c5037ebe114295f5ad2cfd3db18ed2ed1d5"
+    },
+    {
+      "path": "gpt-niang-usage/widget.xaml",
+      "sha256": "5a223e430be13af45731d80ed12baecc980c1fe18c4c2282031ccf05d9206f0e"
+    },
+    {
+      "path": "gpt-niang-usage/runtime/ui-settings.ps1",
+      "sha256": "bfbd7551fe022c523c7814e38ae26886c8b9b88d6a8000ae7be4fe672c10cdbf"
+    }
+  ]
+}

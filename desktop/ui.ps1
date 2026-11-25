@@ -99,7 +99,8 @@ function Update-Status {
         if(!$groups.Count){$message='暂无额度数据'}
         else {
           $index=[Math]::Min($script:prefs.group,$groups.Count-1);$group=$groups[$index]
-          $script:ui.Header.Text='剩余额度';$script:ui.Header.ToolTip=[string]$group.name+' · 在菜单中切换模型组'
+          $script:ui.Header.Text=if($group.name-like '*Gemini*'){'Gemini 剩余额度'}elseif($group.name-like '*Claude*' -or $group.name-like '*GPT*'){'Claude / GPT 额度'}else{'剩余额度'}
+          $script:ui.Header.ToolTip=[string]$group.name+' · 在菜单中切换模型组'
           $script:bubble.ToolTip=[string]$group.name+' · '+$(if($usage.source-eq 'antigravity-cli'){'官方 CLI 只读查询'}else{'测试数据，非真实额度'})
           foreach($pair in @(@('Short','5h','5 小时'),@('Week','weekly','每周'))){
             $prefix=$pair[0];$bucket=@($group.buckets|Where-Object {$_.window-eq $pair[1]})|Select-Object -First 1

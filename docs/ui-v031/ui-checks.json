@@ -1,0 +1,29 @@
+{
+    "ok":  true,
+    "checks":  [
+                   "5h percentage",
+                   "selected model group visible in header",
+                   "weekly percentage",
+                   "progress width 100 percent",
+                   "unknown reset is explicit",
+                   "fixture not represented as real quota",
+                   "upstream styled menu applied",
+                   "switched group visible in header",
+                   "model group switch preserves zero",
+                   "missing window not fabricated",
+                   "missing window clears progress",
+                   "back action accurately labeled",
+                   "selected shape checkmark",
+                   "appearance scale changes whole composition",
+                   "completion toggle saved",
+                   "preference disk roundtrip",
+                   "refresh menu calls provider bridge",
+                   "quote scene",
+                   "expired quota hidden",
+                   "failed quota hidden",
+                   "completion scene labeled simulation",
+                   "collapse hides whole bubble and tails",
+                   "styled submenu opens with real content"
+               ],
+    "quotaSource":  "synthetic UI fixture, not account quota"
+}
