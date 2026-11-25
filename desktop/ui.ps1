@@ -1,14 +1,19 @@
 ﻿# UI adapted from GPT-Niang widget.xaml and runtime/ui-settings.ps1 (MIT).
 # Copyright (c) 2026 T7moris and GPT-Niang contributors. See ../LICENSE.
+. (Join-Path $PSScriptRoot 'quotes.ps1')
+. (Join-Path $PSScriptRoot 'scenes.ps1')
+. (Join-Path $PSScriptRoot 'quote-editor.ps1')
+. (Join-Path $PSScriptRoot 'placement.ps1')
 function Save-Preferences {Write-Json (Join-Path $script:stateDir 'preferences.json') $script:prefs}
 function Set-GeminiBubble([bool]$visible,[switch]$Transient) {
   foreach($name in @('Bubble','Tail','TailNear')){$script:ui[$name].Visibility=if($visible){'Visible'}else{'Hidden'}}
-  if(!$Transient){$script:prefs.collapsed=!$visible}
+  if(!$Transient){$script:prefs.collapsed=!$visible;$script:noticeUntil=[DateTime]::MinValue;$script:noticeRestorePending=$false;$script:autoQuoteUntil=0}
 }
 function Set-GeminiSize {
   # Upstream 378-unit design canvas; retain existing user's character-size preference.
   $script:window.Width=[Math]::Round(378*$script:prefs.size/208)
   $script:window.Height=$script:window.Width
+  $script:desktopRestored=$false
 }
 function Add-GeminiItem($parent,$label,[scriptblock]$handler) {
   $item=[Windows.Controls.MenuItem]::new();$item.Header=$label;$item.Style=$script:menuResources['SettingsItem']
@@ -19,9 +24,11 @@ function Add-GeminiDivider {
   $item=[Windows.Controls.Separator]::new();$item.Margin='20,8';$item.Background=[Windows.Media.BrushConverter]::new().ConvertFromString('#EEE5F6')
   $script:menu.Items.Add($item)|Out-Null
 }
-function Show-GeminiQuote {
-  $script:quoteIndex=($script:quoteIndex+1)%$script:quotes.Count
-  $script:bubbleMode='quote';Set-GeminiBubble $true;Update-Status;Save-Preferences
+function Show-GeminiQuote([switch]$Automatic) {
+  $script:currentQuote=Get-WidgetQuote $script:stateDir
+  $script:bubbleMode='quote'
+  if($Automatic){Set-GeminiBubble $true -Transient}else{Set-GeminiBubble $true;Save-Preferences}
+  Update-Status
 }
 function Initialize-GeminiUi {
   $script:window=[Windows.Markup.XamlReader]::Parse([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'widget.xaml')))
@@ -30,7 +37,9 @@ function Initialize-GeminiUi {
   $script:ui=@{}
   foreach($name in @('Bubble','Tail','TailNear','Girl','MenuButton','Header','Refresh','QuotaText','QuoteText','ShortRow','WeekRow','ShortLabel','WeekLabel','ShortLeft','WeekLeft','ShortBar','WeekBar','ShortReset','WeekReset')){$script:ui[$name]=$script:window.FindName($name)}
   $script:bubble=$script:ui.Bubble;$script:avatar=$script:ui.Girl;$script:text=$script:ui.QuoteText
-  $script:bubbleMode='quota';$script:quotes=@('我在这儿，慢慢来就好。','灵感到啦，一起试试看？','休息一下，也是在积蓄星光。');$script:quoteIndex=0
+  $script:bubbleMode='quota';$script:currentQuote='我在这儿，慢慢来就好。'
+  $script:autoQuoteUntil=0;$script:noticeRestorePending=$false
+  Initialize-WidgetAutoQuoteSettings $script:prefs
   $script:avatar.ToolTip='单击查看额度；拖动移动；右键打开设置'
   $script:avatar.RenderTransformOrigin=[Windows.Point]::new(.5,.9)
   $script:transforms=[Windows.Media.TransformGroup]::new();$script:scale=[Windows.Media.ScaleTransform]::new();$script:rotate=[Windows.Media.RotateTransform]::new();$script:translate=[Windows.Media.TranslateTransform]::new()
@@ -58,13 +67,17 @@ function Initialize-GeminiUi {
   $appearance=Add-GeminiItem $script:menu '外观设置' $null
   foreach($size in @(180,240,300)){$label=switch($size){180{'小 · 75%'}240{'标准 · 100%'}300{'大 · 125%'}};$item=Add-GeminiItem $appearance $label {$script:prefs.size=[int]$this.Uid;Set-GeminiSize;Save-Preferences};$item.Uid=[string]$size;$item.IsCheckable=$true}
   $script:sizeMenu=$appearance
-  $script:pauseItem=Add-GeminiItem $appearance '暂停动画' {$script:prefs.paused=$this.IsChecked};$script:pauseItem.IsCheckable=$true
+  $script:pauseItem=Add-GeminiItem $appearance '暂停动画' {$script:prefs.paused=$this.IsChecked;Save-Preferences};$script:pauseItem.IsCheckable=$true
   $script:groupMenu=Add-GeminiItem $script:menu '额度模型组' $null
+  $script:quoteEditorItem=Add-GeminiItem $script:menu '编辑我的语录' {Open-GeminiQuoteEditor}
+  $script:autoQuoteMenu=Add-GeminiItem $script:menu '自动语录' $null
+  $script:autoQuoteItem=Add-GeminiItem $script:autoQuoteMenu '启用自动语录' {Set-GeminiAutoQuotes $this.IsChecked $script:autoQuoteIntervalSeconds};$script:autoQuoteItem.IsCheckable=$true
+  foreach($pair in @(@(60,'每 1 分钟'),@(300,'每 5 分钟'),@(900,'每 15 分钟'))){$item=Add-GeminiItem $script:autoQuoteMenu $pair[1] {Set-GeminiAutoQuotes $script:autoQuoteEnabled ([int]$this.Uid)};$item.Uid=[string]$pair[0];$item.IsCheckable=$true}
   $script:completionItem=Add-GeminiItem $script:menu '回答结束提醒' {$script:prefs.completion=$this.IsChecked;Save-Preferences};$script:completionItem.IsCheckable=$true
   Add-GeminiDivider
   $display=Add-GeminiItem $script:menu '显示与位置' $null
-  $script:followItem=Add-GeminiItem $display '跟随 Antigravity 窗口' {$script:prefs.followHost=$this.IsChecked;Save-Preferences};$script:followItem.IsCheckable=$true
-  $null=Add-GeminiItem $display '重置位置' {$script:prefs.right=16;$script:prefs.bottom=16;$script:window.Left=100;$script:window.Top=100;Save-Preferences}
+  $script:followItem=Add-GeminiItem $display '跟随 Antigravity 窗口' {Set-GeminiFollowHost $this.IsChecked};$script:followItem.IsCheckable=$true
+  $null=Add-GeminiItem $display '重置位置' {Reset-GeminiPosition}
   Add-GeminiDivider
   $exit=Add-GeminiItem $script:menu '退出 Gemini 娘' {$script:window.Close()};$exit.Foreground=[Windows.Media.BrushConverter]::new().ConvertFromString('#AE7A94')
   $script:menu.Add_Opened({Sync-GeminiMenu})
@@ -78,6 +91,8 @@ function Sync-GeminiMenu {
   $script:actionMenu.Items[1].Header=if($script:prefs.view-eq 'back'){'耳朵轻动'}else{'眨眼'}
   foreach($item in $script:sizeMenu.Items){if($item.Uid){$item.IsChecked=[int]$item.Uid-eq $script:prefs.size}}
   $script:pauseItem.IsChecked=$script:prefs.paused;$script:followItem.IsChecked=$script:prefs.followHost;$script:completionItem.IsChecked=$script:prefs.completion
+  $script:autoQuoteItem.IsChecked=$script:autoQuoteEnabled
+  foreach($item in $script:autoQuoteMenu.Items){if($item.Uid){$item.IsChecked=[int]$item.Uid-eq $script:autoQuoteIntervalSeconds}}
   $script:groupMenu.Items.Clear();$usage=Read-Json (Join-Path $script:stateDir 'usage.json')
   $groups=@($usage.groups|Where-Object {$null-ne $_})
   for($i=0;$i-lt $groups.Count;$i++){$item=Add-GeminiItem $script:groupMenu ([string]$groups[$i].name) {$script:prefs.group=[int]$this.Uid;$script:bubbleMode='quota';Set-GeminiBubble $true;Update-Status;Save-Preferences};$item.Uid=[string]$i;$item.IsCheckable=$true;$item.IsChecked=$i-eq $script:prefs.group}
@@ -86,7 +101,7 @@ function Sync-GeminiMenu {
 function Update-Status {
   $message=$null
   if([DateTime]::UtcNow-lt $script:noticeUntil){$message=if($TestMode){'任务已完成 ✦（测试）'}else{'任务已完成 ✦'}}
-  elseif($script:bubbleMode-eq 'quote'){$message=$script:quotes[$script:quoteIndex]}
+  elseif($script:bubbleMode-eq 'quote'){$message=$script:currentQuote}
   else {
     $usage=Read-Json (Join-Path $script:stateDir 'usage.json')
     if(!$usage){$message='正在读取额度…'}
@@ -117,5 +132,5 @@ function Update-Status {
   }
   $script:ui.QuotaText.Visibility=if($message){'Collapsed'}else{'Visible'}
   $script:ui.QuoteText.Visibility=if($message){'Visible'}else{'Collapsed'}
-  if($message){$script:text.FontSize=if($message.Length-gt 25){13}else{19};$script:text.Text=$message;$script:bubble.ToolTip=$message}
+  if($message){Set-GeminiMessage $message;$script:bubble.ToolTip=$message}
 }
