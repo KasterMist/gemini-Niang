@@ -1,5 +1,5 @@
 ﻿param(
-  [switch]$CheckOnly,[switch]$NoRefresh,[switch]$TestMode,
+  [switch]$CheckOnly,[switch]$NoRefresh,[switch]$TestMode,[switch]$ShowInTaskbar,
   [string]$StateDir=(Join-Path $env:LOCALAPPDATA 'GeminiNiang\state'),
   [string]$HostExecutablePath=(Join-Path $env:LOCALAPPDATA 'Programs\antigravity\Antigravity.exe'),
   [ValidateRange(0,3600)][int]$AutoCloseSeconds=0
@@ -9,10 +9,11 @@ $script:root=Split-Path $PSScriptRoot -Parent
 $script:stateDir=[IO.Path]::GetFullPath($StateDir)
 $script:assetDir=Join-Path $script:root 'assets\characters\gemini\png'
 $script:actions=@('idle','blink','wave','happy','think','sleep')
+$script:views=@('bust','full','side','back')
 . (Join-Path $PSScriptRoot 'native.ps1')
-foreach($view in @('bust','full')){foreach($action in $script:actions){if(!(Test-Path (Join-Path $script:assetDir "$view-$action.png"))){throw "Missing asset: $view-$action"}}}
+foreach($view in $script:views){foreach($action in $script:actions){if(!(Test-Path (Join-Path $script:assetDir "$view-$action.png"))){throw "Missing asset: $view-$action"}}}
 if($CheckOnly){
-  [pscustomobject]@{ok=$true;assets=12;stateDir=$script:stateDir;hostExecutableExists=(Test-Path -LiteralPath $HostExecutablePath);host=[GeminiNiangNative]::FindHost($HostExecutablePath,0)}|ConvertTo-Json -Depth 4
+  [pscustomobject]@{ok=$true;assets=24;stateDir=$script:stateDir;hostExecutableExists=(Test-Path -LiteralPath $HostExecutablePath);host=[GeminiNiangNative]::FindHost($HostExecutablePath,0)}|ConvertTo-Json -Depth 4
   return
 }
 Add-Type -AssemblyName PresentationFramework,PresentationCore,WindowsBase
@@ -26,7 +27,7 @@ function Write-Json($file,$value){
 $script:prefs=@{view='bust';action='idle';size=240;followHost=$true;paused=$false;right=16;bottom=16}
 $saved=Read-Json (Join-Path $script:stateDir 'preferences.json')
 if($saved){
-  if($saved.view-in @('bust','full')){$script:prefs.view=$saved.view}
+  if($saved.view-in $script:views){$script:prefs.view=$saved.view}
   if($saved.action-in $script:actions){$script:prefs.action=$saved.action}
   if($saved.size-in @(180,240,300)){$script:prefs.size=[int]$saved.size}
   if($saved.followHost-is [bool]){$script:prefs.followHost=$saved.followHost}
@@ -38,12 +39,12 @@ try{$owned=$script:mutex.WaitOne(0)}catch [Threading.AbandonedMutexException]{$o
 if(!$owned){$script:mutex.Dispose();return}
 Remove-Item -LiteralPath (Join-Path $script:stateDir 'stop.flag') -ErrorAction SilentlyContinue
 $script:images=@{}
-foreach($view in @('bust','full')){foreach($action in $script:actions){
+foreach($view in $script:views){foreach($action in $script:actions){
   $bitmap=[Windows.Media.Imaging.BitmapImage]::new();$bitmap.BeginInit();$bitmap.CacheOption='OnLoad';$bitmap.UriSource=[Uri](Join-Path $script:assetDir "$view-$action.png");$bitmap.EndInit();$bitmap.Freeze();$script:images["$view-$action"]=$bitmap
 }}
 $script:window=[Windows.Window]::new()
 $script:window.Title='Gemini 娘';$script:window.WindowStyle='None';$script:window.AllowsTransparency=$true;$script:window.Background=[Windows.Media.Brushes]::Transparent
-$script:window.SizeToContent='WidthAndHeight';$script:window.ResizeMode='NoResize';$script:window.ShowInTaskbar=[bool]$TestMode;$script:window.ShowActivated=$false
+$script:window.SizeToContent='WidthAndHeight';$script:window.ResizeMode='NoResize';$script:window.ShowInTaskbar=([bool]$TestMode -or [bool]$ShowInTaskbar);$script:window.ShowActivated=$false
 $script:window.Left=100;$script:window.Top=180
 $panel=[Windows.Controls.StackPanel]::new();$script:window.Content=$panel
 $script:bubble=[Windows.Controls.Border]::new();$script:bubble.Width=300;$script:bubble.Padding='14';$script:bubble.CornerRadius='14';$script:bubble.BorderThickness='1';$script:bubble.BorderBrush=[Windows.Media.BrushConverter]::new().ConvertFromString('#BBA9D8');$script:bubble.Background=[Windows.Media.BrushConverter]::new().ConvertFromString('#FFF9F6FF');$script:bubble.Visibility='Collapsed'
@@ -60,10 +61,11 @@ $script:menu=[Windows.Controls.ContextMenu]::new();$script:window.ContextMenu=$s
 function Save-Preferences {Write-Json (Join-Path $script:stateDir 'preferences.json') $script:prefs}
 function Add-MenuItem($parent,$label,[scriptblock]$handler){$item=[Windows.Controls.MenuItem]::new();$item.Header=$label;$item.Add_Click($handler);$parent.Items.Add($item)|Out-Null;return $item}
 $shapeMenu=[Windows.Controls.MenuItem]::new();$shapeMenu.Header='出场形态';$script:menu.Items.Add($shapeMenu)|Out-Null
-foreach($pair in @(@('bust','半身挂件'),@('full','全身伙伴'))){$item=Add-MenuItem $shapeMenu $pair[1] { $script:prefs.view=$this.Tag;Save-Preferences };$item.Tag=$pair[0]}
+foreach($pair in @(@('bust','半身挂件'),@('full','正面全身'),@('side','侧面全身'),@('back','背面全身'))){$item=Add-MenuItem $shapeMenu $pair[1] { $script:prefs.view=$this.Tag;Save-Preferences };$item.Tag=$pair[0]}
 $actionMenu=[Windows.Controls.MenuItem]::new();$actionMenu.Header='动作';$script:menu.Items.Add($actionMenu)|Out-Null
 $labels=@('待机','眨眼','招手','开心','思考','困倦')
 for($i=0;$i-lt 6;$i++){$item=Add-MenuItem $actionMenu $labels[$i] {$script:prefs.action=$this.Tag;$script:clock=0;Save-Preferences};$item.Tag=$script:actions[$i]}
+$script:menu.Add_Opened({$actionMenu.Items[1].Header=if($script:prefs.view-eq 'back'){'耳朵轻动'}else{'眨眼'}})
 $sizeMenu=[Windows.Controls.MenuItem]::new();$sizeMenu.Header='大小';$script:menu.Items.Add($sizeMenu)|Out-Null
 foreach($size in @(180,240,300)){$item=Add-MenuItem $sizeMenu ([string]$size+' px') {$script:prefs.size=[int]$this.Tag;$script:avatar.Width=$script:prefs.size;$script:avatar.Height=$script:prefs.size;Save-Preferences};$item.Tag=$size}
 $script:followItem=Add-MenuItem $script:menu '跟随 Antigravity 窗口' {$script:prefs.followHost=!$script:prefs.followHost;$script:followItem.IsChecked=$script:prefs.followHost;Save-Preferences}

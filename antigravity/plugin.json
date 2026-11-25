@@ -2,7 +2,7 @@
   "$schema": "https://antigravity.google/schemas/v1/plugin.json",
   "name": "gemini-niang",
   "displayName": "双子星伙伴",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Local read-only quota tools and completion notifications for the Gemini-Niang desktop companion. Does not create model turns or read conversation transcripts.",
   "author": {
     "name": "KasterMist"

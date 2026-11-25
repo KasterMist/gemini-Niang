@@ -1,6 +1,6 @@
 {
   "id": "gemini-niang",
-  "version": "0.1.1",
+  "version": "0.3.0",
   "animationType": "pose-atlas-with-procedural-motion",
   "cycleSeconds": 4,
   "cellSize": 512,
@@ -111,10 +111,74 @@
       ],
       "png": "png/bust-{action}.png",
       "gif": "gif/bust-{action}.gif"
+    },
+    "side": {
+      "atlas": "side-atlas.png",
+      "registrations": [
+        {
+          "action": "idle",
+          "shiftX": -63
+        },
+        {
+          "action": "blink",
+          "shiftX": -18
+        },
+        {
+          "action": "wave",
+          "shiftX": 30
+        },
+        {
+          "action": "happy",
+          "shiftX": -64
+        },
+        {
+          "action": "think",
+          "shiftX": -18
+        },
+        {
+          "action": "sleep",
+          "shiftX": 27
+        }
+      ],
+      "png": "png/side-{action}.png",
+      "gif": "gif/side-{action}.gif"
+    },
+    "back": {
+      "atlas": "back-atlas.png",
+      "registrations": [
+        {
+          "action": "idle",
+          "shiftX": -40
+        },
+        {
+          "action": "blink",
+          "shiftX": -6
+        },
+        {
+          "action": "wave",
+          "shiftX": 37
+        },
+        {
+          "action": "happy",
+          "shiftX": -40
+        },
+        {
+          "action": "think",
+          "shiftX": 0
+        },
+        {
+          "action": "sleep",
+          "shiftX": 35
+        }
+      ],
+      "png": "png/back-{action}.png",
+      "gif": "gif/back-{action}.gif"
     }
   },
   "sourceSha256": {
     "full": "19433fc2390abee58288cce40e79c15d7144aef9f7d5d20e56686e9605449e61",
-    "bust": "ea453eb7910d63809b7320041460d7c3b0a9e534b9456ff81a9d4e3b671cd97e"
+    "bust": "ea453eb7910d63809b7320041460d7c3b0a9e534b9456ff81a9d4e3b671cd97e",
+    "side": "fd91e362bfda0c7541878a1ec1d6f7aaebf0f5adc2dd7818e32bb815bb82d06b",
+    "back": "7d077db41c81142a8fc916f11fe3b36f673c54feb0b32b78a160eb76aec9ca4d"
   }
 }

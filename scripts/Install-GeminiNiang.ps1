@@ -1,7 +1,7 @@
 ﻿param(
   [string]$AgyPath,
   [string]$StateDir=(Join-Path $env:LOCALAPPDATA 'GeminiNiang\state'),
-  [switch]$CheckOnly,[switch]$DownloadCli,[switch]$RegisterPlugin,[switch]$StartWidget
+  [switch]$CheckOnly,[switch]$DownloadCli,[switch]$RegisterPlugin,[switch]$StartWidget,[switch]$ManualCopyFallback
 )
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
@@ -43,16 +43,43 @@ if(Test-Path -LiteralPath $file){
   foreach($property in $original.PSObject.Properties){$config[$property.Name]=$property.Value}
   $backup=$file+'.'+[DateTime]::UtcNow.ToString('yyyyMMddHHmmssfff')+'.bak';Copy-Item -LiteralPath $file -Destination $backup
 }
-$config.agyPath=$AgyPath;$config.nodePath=$node.Source;$config.version='0.2.0'
+$config.agyPath=$AgyPath;$config.nodePath=$node.Source;$config.version='0.3.0'
 try{
   $temp=$file+'.'+[Guid]::NewGuid().ToString('N')+'.tmp'
   [IO.File]::WriteAllText($temp,($config|ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
   if(Test-Path -LiteralPath $file){[IO.File]::Replace($temp,$file,($file+'.previous.bak'))}else{[IO.File]::Move($temp,$file)}
   if($RegisterPlugin){
+    $pluginHome=Join-Path $env:USERPROFILE '.gemini\config\plugins\gemini-niang'
+    $pluginBackup=$null
+    if(Test-Path -LiteralPath $pluginHome){
+      $existing=Get-Content -LiteralPath (Join-Path $pluginHome 'plugin.json') -Raw -Encoding UTF8|ConvertFrom-Json
+      if($existing.name-ne 'gemini-niang'-or $existing.repository-ne 'https://github.com/KasterMist/gemini-Niang'){throw 'Existing plugin has another origin; refusing overwrite'}
+      if((Get-Item -LiteralPath $pluginHome).Attributes-band [IO.FileAttributes]::ReparsePoint){throw 'Plugin directory may not be a link'}
+      $pluginBackup=Join-Path $StateDir ('plugin-backup-'+[DateTime]::UtcNow.ToString('yyyyMMddHHmmssfff'))
+      Copy-Item -LiteralPath $pluginHome -Destination $pluginBackup -Recurse
+      Write-Output ('Plugin backup='+$pluginBackup)
+    }
     & $AgyPath plugin install (Join-Path $root 'antigravity')
-    if($LASTEXITCODE-ne 0){throw 'Plugin install failed; local configuration will be restored'}
+    if($LASTEXITCODE-ne 0){
+      if(!$ManualCopyFallback){throw 'Plugin install failed; local configuration will be restored'}
+      # CLI 1.5.16 can fail a Windows staging-directory rename despite a writable
+      # destination. Use the documented local plugin directory, never ACL edits.
+      if(Test-Path -LiteralPath $pluginHome){
+        $existing=Get-Content -LiteralPath (Join-Path $pluginHome 'plugin.json') -Raw -Encoding UTF8|ConvertFrom-Json
+        if($existing.name-ne 'gemini-niang'-or $existing.repository-ne 'https://github.com/KasterMist/gemini-Niang'){throw 'Existing plugin has another origin; refusing overwrite'}
+        if((Get-Item -LiteralPath $pluginHome).Attributes-band [IO.FileAttributes]::ReparsePoint){throw 'Plugin directory may not be a link'}
+        Get-ChildItem -LiteralPath (Join-Path $root 'antigravity') -Force | ForEach-Object {Copy-Item -LiteralPath $_.FullName -Destination $pluginHome -Recurse -Force}
+      }else{Copy-Item -LiteralPath (Join-Path $root 'antigravity') -Destination $pluginHome -Recurse}
+      & $AgyPath plugin enable gemini-niang
+      if($LASTEXITCODE-ne 0){throw 'Local-copy fallback could not enable plugin'}
+      Write-Output 'Installed through local-directory fallback after CLI staging rename failed.'
+    }
   }
 }catch{
+  if($pluginBackup-and (Test-Path -LiteralPath $pluginBackup)){
+    if(!(Test-Path -LiteralPath $pluginHome)){$null=New-Item -ItemType Directory -Path $pluginHome -Force}
+    Get-ChildItem -LiteralPath $pluginBackup -Force | ForEach-Object {Copy-Item -LiteralPath $_.FullName -Destination $pluginHome -Recurse -Force}
+  }
   if($backup){Copy-Item -LiteralPath $backup -Destination $file -Force}else{Remove-Item -LiteralPath $file -ErrorAction SilentlyContinue}
   throw
 }

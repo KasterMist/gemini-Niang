@@ -20,13 +20,19 @@ heading = f"## {version}\n"
 if heading not in changelog or changelog.split("## ", 1)[1].splitlines()[0] != version:
     raise SystemExit("The first changelog entry must match the release version")
 changes = changelog.split(heading, 1)[1].split("\n## ", 1)[0].strip()
-credits = (root / 'README.md').read_text(encoding='utf-8-sig').split('## 致谢与许可\n\n', 1)[1].split('\n\n交互参考', 1)[0]
+readme_path = root / 'README-GPT-Niang.upstream.md'
+if not readme_path.is_file():
+    readme_path = root / 'README.md'
+credits = readme_path.read_text(encoding='utf-8-sig').split('## 致谢与许可\n\n', 1)[1].split('\n\n交互参考', 1)[0]
 tracked = subprocess.check_output(
     ["git", "ls-files", "-z"], cwd=root
 ).decode("utf-8").split("\0")
 # Keep maintainer docs in Git. The updater preserves an existing docs directory
 # as personal data, so shipping another docs tree would collide on upgrade.
 files = sorted(p for p in tracked if p and not p.startswith((".github/", "scripts/", ".codex/", "macos/", "script/", "docs/")))
+# This is the preserved Codex/Windows bundle, not the Gemini-Niang release.
+legacy_root_files = {'LICENSE', 'README.md', '安装GPT娘.cmd', '停用GPT娘.cmd', '打开GPT娘.cmd', '检测套餐.cmd', '更新记录.md', '本机修订-20261025.md'}
+files = [p for p in files if p.startswith(('gpt-niang-usage/', '.agents/')) or p in legacy_root_files]
 required = {
     "LICENSE", "gpt-niang-usage/LICENSE",
     "gpt-niang-usage/assets/CHARACTER-NOTICE.txt",
@@ -79,7 +85,7 @@ with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED, compre
         info = zipfile.ZipInfo(prefix + name, date_time=(2026, 1, 1, 0, 0, 0))
         info.compress_type = zipfile.ZIP_DEFLATED
         info.external_attr = 0o100644 << 16
-        archive.writestr(info, (root / name).read_bytes())
+        archive.writestr(info, readme_path.read_bytes() if name == 'README.md' else (root / name).read_bytes())
 with zipfile.ZipFile(archive_path) as archive:
     if archive.testzip() is not None:
         raise SystemExit("Archive integrity check failed")

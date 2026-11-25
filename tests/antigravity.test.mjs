@@ -6,7 +6,7 @@ import path from 'node:path';
 import { spawn, execFileSync } from 'node:child_process';
 import { once } from 'node:events';
 import { parseUsage, queryUsage, USAGE_ARGS } from '../antigravity/scripts/usage.mjs';
-import { completionEvent, publishCompletion } from '../antigravity/scripts/events.mjs';
+import { completionEvent, publishCompletion, transcriptMarker } from '../antigravity/scripts/events.mjs';
 import { atomicJson, readJson } from '../antigravity/scripts/state.mjs';
 const fixture = () => ({ status: 'SUCCESS', num_turns: 0, conversation_id: 'DO-NOT-STORE', response: 'DO-NOT-STORE', command: { name: 'usage', data: { groups: [{ name: 'Gemini Models', buckets: [{ id: 'gemini-weekly', name: 'Weekly Limit Remaining', window: 'weekly', remaining_fraction: .79556, reset_time: '2026-12-01T01:45:58Z' }, { id: 'gemini-5h', window: '5h', remaining_fraction: 1, reset_time: '1970-01-01T00:00:00Z' }] }] } } });
 const hook = () => ({ conversationId: 'conversation-private', executionNum: 7, terminationReason: 'model_stop', fullyIdle: true, lastUserInput: 'DO-NOT-STORE', transcriptPath: 'DO-NOT-STORE' });
@@ -53,6 +53,7 @@ test('actual missing executable is a clean unavailable state', async () => {
 });
 test('Stop completion requires final successful idle, not every model invocation', () => {
   assert.ok(completionEvent(hook()));
+  assert.ok(completionEvent({ ...hook(), terminationReason: 'NO_TOOL_CALL' }));
   for (const change of [{ fullyIdle: false }, { fullyIdle: undefined }, { terminationReason: 'error' }, { terminationReason: 'max_steps_exceeded' }, { terminationReason: 'cancelled' }, { error: 'failure' }, { executionNum: -1 }, { conversationId: '' }]) assert.equal(completionEvent({ ...hook(), ...change }), null);
   assert.equal(JSON.stringify(completionEvent(hook())).includes('DO-NOT-STORE'), false);
 });
@@ -65,6 +66,18 @@ test('completion events atomically deduplicate concurrent hooks and retain only 
 test('completion spool is bounded to 128 event files', async t => {
   const dir = await temp(t); for (let i = 0; i < 132; i++) await publishCompletion({ ...hook(), executionNum: i }, dir);
   assert.equal((await readdir(path.join(dir, 'events'))).length, 128);
+});
+test('App executionNum resets to zero: changed transcript metadata identifies repeated user turns', async t => {
+  const dir = await temp(t), brain = path.join(dir, 'brain');
+  const transcript = path.join(brain, 'test-conversation/.system_generated/logs/transcript.jsonl');
+  await atomicJson(transcript, { fixture: 1 });
+  const input = { ...hook(), executionNum: 0, terminationReason: 'NO_TOOL_CALL', lastUserInput: '继续', transcriptPath: transcript };
+  assert.equal(await publishCompletion(input, dir, { transcriptRoots: [brain] }), true);
+  assert.equal(await publishCompletion(input, dir, { transcriptRoots: [brain] }), false);
+  await atomicJson(transcript, { fixture: 2, additionalTurn: true });
+  assert.equal(await publishCompletion(input, dir, { transcriptRoots: [brain] }), true);
+  assert.equal((await readdir(path.join(dir, 'events'))).length, 2);
+  assert.equal(await transcriptMarker({ transcriptPath: path.join(dir, 'config.json') }, [brain]), '');
 });
 test('hook process always returns empty JSON and does not force agent continuation', async t => {
   const dir = await temp(t);

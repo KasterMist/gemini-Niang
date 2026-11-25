@@ -15,7 +15,10 @@ changelog = (root / '更新记录.md').read_text(encoding='utf-8-sig')
 if changelog.split('## ', 1)[1].splitlines()[0] != version:
     raise SystemExit('First changelog entry must match the release version')
 changes = changelog.split(f'## {version}\n', 1)[1].split('\n## ', 1)[0].strip()
-credits = (root / 'README.md').read_text(encoding='utf-8-sig').split('## 致谢与许可\n\n', 1)[1].split('\n\n交互参考', 1)[0]
+readme_path = root / 'README-GPT-Niang.upstream.md'
+if not readme_path.is_file():
+    readme_path = root / 'README.md'
+credits = readme_path.read_text(encoding='utf-8-sig').split('## 致谢与许可\n\n', 1)[1].split('\n\n交互参考', 1)[0]
 dist = root / 'dist'
 windows = f'gpt-niang-usage-widget-v{version}-windows.zip'
 macos = f'gpt-niang-usage-widget-v{version}-macos-universal.zip'

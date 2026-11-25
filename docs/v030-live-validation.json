@@ -1,0 +1,19 @@
+{
+  "version": "0.3.0",
+  "client": "Antigravity App",
+  "testConversationMessages": 3,
+  "finalReply": "联调完成",
+  "stopReason": "NO_TOOL_CALL",
+  "fullyIdle": true,
+  "eventEmitted": true,
+  "observedAt": "2026-11-24T14:28:07.7785676Z",
+  "widget": {
+    "action": "happy",
+    "noticeActive": true,
+    "bubbleVisible": true,
+    "testMode": false,
+    "hostAttached": true,
+    "nativeVisible": true
+  },
+  "privacy": "No account identifiers, quota values, prompts from unrelated chats, or conversation IDs included."
+}

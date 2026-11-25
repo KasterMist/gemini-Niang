@@ -11,7 +11,7 @@ test('root redirects and all browser assets/downloads are served', async t => {
   const r = await fetch(root); assert.equal(r.status, 200); assert.match(r.url, /preview\/index.html$/);
   assert.match(await r.text(), /Gemini 娘/);
   for (const url of ['/preview/studio.mjs', '/preview/studio.css', '/preview/motion.mjs', '/assets/characters/gemini/character.json']) assert.equal((await fetch(root + url)).status, 200);
-  for (const view of ['full', 'bust']) for (const action of ['idle', 'blink', 'wave', 'happy', 'think', 'sleep']) for (const ext of ['png', 'gif']) {
+  for (const view of ['full', 'bust', 'side', 'back']) for (const action of ['idle', 'blink', 'wave', 'happy', 'think', 'sleep']) for (const ext of ['png', 'gif']) {
     const media = await fetch(`${root}/assets/characters/gemini/${ext}/${view}-${action}.${ext}`, { method: 'HEAD' });
     assert.equal(media.status, 200); assert.equal(media.headers.get('content-type'), `image/${ext}`);
   }

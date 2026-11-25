@@ -25,7 +25,7 @@ test('six actions, deterministic finite periodic motion, reduced-motion support'
 });
 test('atlases and manifest retain real alpha and source hashes', async () => {
   const manifest = JSON.parse(await readFile(new URL('character.json', base), 'utf8'));
-  for (const view of ['full', 'bust']) {
+  for (const view of ['full', 'bust', 'side', 'back']) {
     const source = await readFile(new URL(`${view}-atlas.png`, base));
     assert.equal(createHash('sha256').update(source).digest('hex'), manifest.sourceSha256[view]);
     const { data, info } = await sharp(source).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -35,7 +35,7 @@ test('atlases and manifest retain real alpha and source hashes', async () => {
     assert.ok(transparent > info.width * info.height * .1 && visible > 200000);
   }
 });
-for (const view of ['full', 'bust']) for (const a of ACTIONS) {
+for (const view of ['full', 'bust', 'side', 'back']) for (const a of ACTIONS) {
   test(`${view}/${a.id}: PNG and genuine looping multi-frame GIF`, async () => {
     const png = await sharp(await readFile(new URL(`png/${view}-${a.id}.png`, base))).metadata();
     assert.equal(png.width, 512); assert.equal(png.height, 512); assert.equal(png.hasAlpha, true);

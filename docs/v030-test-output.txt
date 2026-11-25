@@ -1,0 +1,57 @@
+
+> gemini-niang@0.3.0 test
+> node --test tests/*.test.mjs
+
+✔ real CLI 1.5 response shape maps fractions, reset epoch and drops private fields (1.4176ms)
+✔ reject model-generated answers, nonzero turns and unknown response shapes (0.1589ms)
+✔ reject invalid fractions without silently clamping (0.1303ms)
+✔ zero quota and absent reset are valid, empty groups do not invent quotas (0.4494ms)
+✔ provider only spawns fixed read-only usage args with no shell (0.3378ms)
+✔ provider failure modes discard possible secrets from CLI output (0.2451ms)
+✔ actual missing executable is a clean unavailable state (2.8087ms)
+✔ Stop completion requires final successful idle, not every model invocation (0.4322ms)
+✔ completion events atomically deduplicate concurrent hooks and retain only sanitized payload (14.6778ms)
+✔ completion spool is bounded to 128 event files (190.8901ms)
+✔ App executionNum resets to zero: changed transcript metadata identifies repeated user turns (11.0112ms)
+✔ hook process always returns empty JSON and does not force agent continuation (261.2285ms)
+✔ atomic state updates replace files on Windows and preserve valid JSON (3.5638ms)
+✔ MCP process handshake, list and unavailable-CLI tool call (85.2327ms)
+✔ plugin configuration is self-contained, uses correct hook shape, no credential declaration (1.4738ms)
+✔ Windows PowerShell 5 syntax and native preflight (456.7976ms)
+✔ Windows WPF process loads real assets and reacts to a simulated Stop hook (3322.5711ms)
+✔ Windows launch scripts use UTF-8 BOM and plugin registration is opt-in (1.0432ms)
+✔ six actions, deterministic finite periodic motion, reduced-motion support (2.2621ms)
+✔ atlases and manifest retain real alpha and source hashes (133.7187ms)
+✔ full/idle: PNG and genuine looping multi-frame GIF (60.5338ms)
+✔ full/blink: PNG and genuine looping multi-frame GIF (48.5077ms)
+✔ full/wave: PNG and genuine looping multi-frame GIF (46.5431ms)
+✔ full/happy: PNG and genuine looping multi-frame GIF (45.7927ms)
+✔ full/think: PNG and genuine looping multi-frame GIF (43.7525ms)
+✔ full/sleep: PNG and genuine looping multi-frame GIF (46.4354ms)
+✔ bust/idle: PNG and genuine looping multi-frame GIF (52.7234ms)
+✔ bust/blink: PNG and genuine looping multi-frame GIF (51.4166ms)
+✔ bust/wave: PNG and genuine looping multi-frame GIF (46.8361ms)
+✔ bust/happy: PNG and genuine looping multi-frame GIF (45.6562ms)
+✔ bust/think: PNG and genuine looping multi-frame GIF (50.0366ms)
+✔ bust/sleep: PNG and genuine looping multi-frame GIF (44.5312ms)
+✔ side/idle: PNG and genuine looping multi-frame GIF (38.4396ms)
+✔ side/blink: PNG and genuine looping multi-frame GIF (37.2003ms)
+✔ side/wave: PNG and genuine looping multi-frame GIF (41.0591ms)
+✔ side/happy: PNG and genuine looping multi-frame GIF (38.5807ms)
+✔ side/think: PNG and genuine looping multi-frame GIF (37.8706ms)
+✔ side/sleep: PNG and genuine looping multi-frame GIF (38.5812ms)
+✔ back/idle: PNG and genuine looping multi-frame GIF (44.9881ms)
+✔ back/blink: PNG and genuine looping multi-frame GIF (38.9335ms)
+✔ back/wave: PNG and genuine looping multi-frame GIF (39.1709ms)
+✔ back/happy: PNG and genuine looping multi-frame GIF (45.9907ms)
+✔ back/think: PNG and genuine looping multi-frame GIF (40.1043ms)
+✔ back/sleep: PNG and genuine looping multi-frame GIF (39.0006ms)
+✔ root redirects and all browser assets/downloads are served (392.3622ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 45
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4434.9928

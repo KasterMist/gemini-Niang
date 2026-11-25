@@ -11,12 +11,12 @@ const out = path.join(root, 'assets/characters/gemini');
 await mkdir(path.join(out, 'png'), { recursive: true });
 await mkdir(path.join(out, 'gif'), { recursive: true });
 const viewArg = process.argv.find(a => a.startsWith('--view='))?.slice(7);
-if (viewArg && !['full', 'bust'].includes(viewArg)) throw new Error('Use --view=full or --view=bust');
-const views = viewArg ? [viewArg] : ['full', 'bust'];
+if (viewArg && !['full', 'bust', 'side', 'back'].includes(viewArg)) throw new Error('Use --view=full|bust|side|back');
+const views = viewArg ? [viewArg] : ['full', 'bust', 'side', 'back'];
 const manifest = viewArg
   ? JSON.parse(await readFile(path.join(out, 'character.json'), 'utf8'))
   : { id: 'gemini-niang', animationType: 'pose-atlas-with-procedural-motion', cycleSeconds: 4, cellSize: 512, gif: { width: 320, height: 320, frames: 40, fps: 10, loop: true }, actions: ACTIONS, views: {}, sourceSha256: {} };
-manifest.version = '0.1.1';
+manifest.version = '0.3.0';
 for (const view of views) {
   const source = await readFile(path.join(out, `${view}-atlas.png`));
   manifest.sourceSha256[view] = createHash('sha256').update(source).digest('hex');
@@ -31,7 +31,7 @@ for (const view of views) {
     if (max < min) throw new Error(`Empty cell ${view}/${action.id}`);
     // Registration-only export: never repaint or synthesize character pixels.
     const shiftX = Math.round(256 - (min + max) / 2);
-    const margin = 64;
+    const margin = 128;
     if (Math.abs(shiftX) > margin) throw new Error('Registration exceeds safe margin');
     const padded = await sharp(cell).extend({ top: 0, bottom: 0, left: margin, right: margin, background: '#00000000' }).png().toBuffer();
     const normalized = await sharp(padded).extract({ left: margin - shiftX, top: 0, width: 512, height: 512 }).png().toBuffer();
