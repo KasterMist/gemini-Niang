@@ -1,0 +1,16 @@
+﻿{
+    "ok":  true,
+    "case":  "Placement",
+    "checks":  [
+                   "negative monitor origin preserved",
+                   "right and bottom clamped",
+                   "left and top clamped",
+                   "oversized canvas anchored inside available bounds",
+                   "desktop drag recognized",
+                   "desktop pixel coordinates persisted",
+                   "stationary click not treated as drag",
+                   "follow offsets saved in native pixels",
+                   "real nearest-monitor work area available",
+                   "actual host updater returns before repositioning while dragging"
+               ]
+}

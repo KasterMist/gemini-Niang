@@ -81,7 +81,7 @@ function Save-WidgetQuotes([string]$DataDir,$Quotes) {
   $temp=$file+'.'+$PID+'.tmp'
   try{
     $json=@{version=1;quotes=@($rows)} | ConvertTo-Json -Depth 5
-    if([Text.Encoding]::UTF8.GetByteCount($json)-gt 1MB){throw '语录文件超过 1 MB，请精简后重试。'}
+    if(([Text.Encoding]::UTF8.GetByteCount($json)+3)-gt 1MB){throw '语录文件超过 1 MB，请精简后重试。'}
     [IO.File]::WriteAllText($temp,$json,[Text.UTF8Encoding]::new($true))
     if([IO.File]::Exists($file)){[IO.File]::Replace($temp,$file,($file+'.bak'),$true)}else{[IO.File]::Move($temp,$file)}
   }finally{if([IO.File]::Exists($temp)){[IO.File]::Delete($temp)}}

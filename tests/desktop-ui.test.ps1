@@ -69,6 +69,35 @@ try {
   if($CaptureDir){Render-Ui $popup.Child (Join-Path $CaptureDir 'shapes.png')}
   $script:shapeMenu.IsSubmenuOpen=$false
   $script:menu.IsOpen=$false
+  Click-Item $script:quoteEditorItem
+  Assert-Ui $script:quoteEditor.IsVisible 'quote editor opens from real menu event'
+  $script:quoteEditor.FindName('Lines').Text='0 | 无效权重'
+  $script:quoteEditor.FindName('Save').RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Button]::ClickEvent))
+  Assert-Ui ($script:quoteEditor.FindName('Feedback').Text-like '*无效*') 'editor invalid input shows feedback'
+  $script:quoteEditor.FindName('Lines').Text="3 | 今天也一起加油吧。`n2 | 今天也一起加油吧。"
+  $script:quoteEditor.FindName('Save').RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Button]::ClickEvent))
+  Assert-Ui ($script:quoteEditor.FindName('Feedback').Text-like '*已保存 1*') 'editor save uses validated weighted pool'
+  Assert-Ui ((Get-WidgetQuoteSettings $StateDir).quotes[0].weight-eq 5) 'editor merged weight persisted'
+  if($CaptureDir){Render-Ui $script:quoteEditor.Content (Join-Path $CaptureDir 'quote-editor.png')}
+  $script:quoteEditor.FindName('Done').RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Button]::ClickEvent))
+  Assert-Ui (!$script:quoteEditor.IsVisible) 'editor close button works'
+  Show-GeminiQuote
+  Assert-Ui ($script:text.Text-eq '今天也一起加油吧。') 'new custom quote immediately available'
+  if($CaptureDir){Render-Ui $script:window.Content (Join-Path $CaptureDir 'custom-quote.png')}
+  $long='星'*200;Set-GeminiMessage $long;$script:window.UpdateLayout()
+  Assert-Ui ($script:text.Text.Length-eq 200 -and $script:text.FontSize-ge 8 -and $script:text.ActualHeight-le 115) '200 character quote fits text area'
+  $script:bubble.ToolTip='200 字排版测试，不是个人语录'
+  if($CaptureDir){Render-Ui $script:window.Content (Join-Path $CaptureDir 'long-quote.png')}
+  $script:autoQuoteItem.IsChecked=$true;Click-Item $script:autoQuoteItem
+  Assert-Ui $script:autoQuoteEnabled 'automatic quote toggle connected'
+  Click-Item $script:autoQuoteMenu.Items[3]
+  Assert-Ui ($script:autoQuoteIntervalSeconds-eq 900) 'automatic quote interval connected'
+  $script:autoQuoteItem.IsChecked=$false;Click-Item $script:autoQuoteItem
+  $script:pauseItem.IsChecked=$true;Click-Item $script:pauseItem
+  Assert-Ui ((Read-Json (Join-Path $StateDir 'preferences.json')).paused) 'pause survives preference disk roundtrip'
+  Set-GeminiBubble $false;$script:noticeRestorePending=$true;Set-GeminiBubble $true -Transient
+  Update-GeminiScenes
+  Assert-Ui ($script:bubble.Visibility-eq 'Hidden') 'completion expiry restores prior collapse in WPF'
   Write-Json (Join-Path $StateDir 'ui-validation.json') @{ok=$true;checks=$script:checks.ToArray();quotaSource='synthetic UI fixture, not account quota'}
   "UI checks passed: $($script:checks.Count)"
 } finally {$script:menu.IsOpen=$false;$script:window.Close()}

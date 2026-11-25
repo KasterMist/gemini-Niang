@@ -5,7 +5,7 @@ function Open-GeminiQuoteEditor {
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  Title="Gemini 娘 · 我的语录" Width="540" Height="480" MinWidth="440" MinHeight="340" ShowInTaskbar="False"
  FontFamily="Microsoft YaHei UI" FontSize="14" Background="#FAF8FD" WindowStartupLocation="CenterScreen">
- <Grid Margin="22">
+ <Border Background="#FAF8FD" Padding="22"><Grid>
   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <TextBlock Margin="0,0,0,14" TextWrapping="Wrap" Foreground="#745A98" Text="一行一句语录。想让某句更常出现，可写：3 | 这句语录。"/>
   <TextBox x:Name="Lines" Grid.Row="1" MaxLength="1048576" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" FontSize="16" Padding="12" Background="White" BorderBrush="#DDD4EA"/>
@@ -17,11 +17,13 @@ function Open-GeminiQuoteEditor {
     <Button x:Name="Done" Content="关闭" Padding="20,6"/>
    </StackPanel>
   </Grid>
- </Grid>
+ </Grid></Border>
 </Window>
 '@)
   $script:quoteEditor=$editor
   $editor.Owner=$script:window
+  $editor.Resources.MergedDictionaries.Add($script:menuResources)
+  foreach($name in @('Defaults','Save','Done')){$editor.FindName($name).Style=$script:menuResources['SettingsPreset']}
   $lines=$editor.FindName('Lines');$feedback=$editor.FindName('Feedback')
   $current=Get-WidgetQuoteSettings $script:stateDir
   $lines.Text=($current.quotes|ForEach-Object{if($_.weight-eq 1){$_.text}else{([string]$_.weight)+' | '+$_.text}})-join [Environment]::NewLine

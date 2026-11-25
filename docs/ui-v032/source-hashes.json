@@ -1,0 +1,64 @@
+{
+  "baselineCommit": "6e6df550b9a68b6e8eb02c2c08981f7d45cb71ff",
+  "originals": [
+    {
+      "path": "desktop/GeminiNiang.ps1",
+      "sha256": "86d1133d3a7098af211cb63f0fe45c5037ebe114295f5ad2cfd3db18ed2ed1d5",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "desktop/ui.ps1",
+      "sha256": "5ac235db527252a10453da16e4bd81b662adf2b58cf88cb442fb7f0785d6d54f",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "desktop/native.ps1",
+      "sha256": "7a6e1f735d7779ae379e870d4965b81f42697401cec22ba72bc6e68aa3fb0951",
+      "extraCopyRecoveryVerified": true
+    }
+  ],
+  "current": [
+    {
+      "path": "desktop/GeminiNiang.ps1",
+      "sha256": "14be15a36abfe6fdfe048f9aa36e876b29e68693f601045eeb2043512956074c"
+    },
+    {
+      "path": "desktop/ui.ps1",
+      "sha256": "4b75bdf42d4c5c3fe2fa791d98ed6c49a7e2d64163c5811cac15292b492fdd57"
+    },
+    {
+      "path": "desktop/native.ps1",
+      "sha256": "6d3fea04cfa5ee1bc6b22cdb56336fa977d13d46afcaf4e804084ef17efd76b8"
+    },
+    {
+      "path": "desktop/scenes.ps1",
+      "sha256": "113a9fa8c5b5997aa78a71df5d9359805ebc33066d21fa2f9f1252cafeca4769"
+    },
+    {
+      "path": "desktop/placement.ps1",
+      "sha256": "34bdb2647630771a7c9c31f088e84473ac8be3aadadece5e928ba26fba790475"
+    },
+    {
+      "path": "desktop/quotes.ps1",
+      "sha256": "c10a9b0768d6903d6bb6136c2dbe18e33a77268684d4e3662328b79cbbe3be77"
+    },
+    {
+      "path": "desktop/quotes.json",
+      "sha256": "7b80db207394a6a4b02a7ad71e6b539fcdbe1d9bafb6fa94c7b8e386dc88c709"
+    },
+    {
+      "path": "desktop/quote-editor.ps1",
+      "sha256": "3f9aafd2f131f562d409f6a2ed720df4691096f8e949b22aec3efde2ca66daf6"
+    }
+  ],
+  "upstream": [
+    {
+      "path": "gpt-niang-usage/runtime/quotes.ps1",
+      "sha256": "635287af71ec89d3489b77864c018abcb280c3fecdd3a39628f5c5939e435d76"
+    },
+    {
+      "path": "gpt-niang-usage/runtime/ui-settings.ps1",
+      "sha256": "bfbd7551fe022c523c7814e38ae26886c8b9b88d6a8000ae7be4fe672c10cdbf"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+﻿{
+    "ok":  true,
+    "case":  "Scheduler",
+    "checks":  [
+                   "off by default",
+                   "enabled preference saved",
+                   "unsupported interval rejected",
+                   "eligible transition starts new interval",
+                   "one quote after full eligible minute",
+                   "hidden window suppressed",
+                   "restoring window does not burst",
+                   "busy menu or completion suppressed",
+                   "busy to idle starts fresh interval",
+                   "clock moving backwards resets interval",
+                   "sleep resume resets interval",
+                   "scene displays due quote",
+                   "automatic quote disappears after eight seconds",
+                   "automatic quote does not interrupt quota reading",
+                   "expired completion restores collapsed bubble",
+                   "open menu prevents automatic quote"
+               ]
+}

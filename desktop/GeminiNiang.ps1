@@ -6,6 +6,7 @@
 )
 $ErrorActionPreference='Stop'
 $script:root=Split-Path $PSScriptRoot -Parent
+$script:appVersion=([IO.File]::ReadAllText((Join-Path $script:root 'package.json'))|ConvertFrom-Json).version
 $script:stateDir=[IO.Path]::GetFullPath($StateDir)
 $script:assetDir=Join-Path $script:root 'assets\characters\gemini\png'
 $script:actions=@('idle','blink','wave','happy','think','sleep')
@@ -125,7 +126,7 @@ $script:timer.Add_Tick({
     $script:avatar.Source=$script:images[($script:prefs.view+'-'+$pose)]
     $script:scale.ScaleX=1;$script:scale.ScaleY=$sy;$script:rotate.Angle=$angle;$script:translate.Y=$y*$script:prefs.size/512
     if(($script:ticks%5)-eq 0){Update-Host;Update-Events;Update-GeminiScenes;Update-Status}
-    if(($script:ticks%20)-eq 0){Write-Json (Join-Path $script:stateDir 'widget-runtime.json') @{pid=$PID;handle=$script:owner.Handle.ToInt64();host=$script:hostHandle;view=$script:prefs.view;action=$action;testMode=[bool]$TestMode;nativeVisible=[GeminiNiangNative]::IsWindowVisible($script:owner.Handle);noticeActive=([DateTime]::UtcNow-lt $script:noticeUntil);bubbleVisible=($script:bubble.Visibility-eq 'Visible');at=[DateTime]::UtcNow.ToString('o')}}
+    if(($script:ticks%20)-eq 0){Write-Json (Join-Path $script:stateDir 'widget-runtime.json') @{version=$script:appVersion;pid=$PID;handle=$script:owner.Handle.ToInt64();host=$script:hostHandle;view=$script:prefs.view;action=$action;paused=$script:prefs.paused;autoQuoteEnabled=$script:autoQuoteEnabled;testMode=[bool]$TestMode;nativeVisible=[GeminiNiangNative]::IsWindowVisible($script:owner.Handle);noticeActive=([DateTime]::UtcNow-lt $script:noticeUntil);bubbleVisible=($script:bubble.Visibility-eq 'Visible');at=[DateTime]::UtcNow.ToString('o')}}
     if(([DateTime]::UtcNow-$script:lastRefresh).TotalSeconds-ge 120){Start-Refresh}
     if($AutoCloseSeconds-gt 0-and ([DateTime]::UtcNow-$script:started).TotalSeconds-ge $AutoCloseSeconds){$script:window.Close()}
     $script:ticks++

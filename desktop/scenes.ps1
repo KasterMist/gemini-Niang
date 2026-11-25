@@ -23,7 +23,8 @@ function Set-GeminiAutoQuotes([bool]$Enabled,[int]$Seconds) {
 function Set-GeminiMessage([string]$Message) {
   # Fit long user quotes to the upstream 184x115 text area instead of clipping.
   for($font=20;$font-ge 8;$font-=.5){
-    $formatted=[Windows.Media.FormattedText]::new($Message,[Globalization.CultureInfo]::CurrentUICulture,[Windows.FlowDirection]::LeftToRight,[Windows.Media.Typeface]::new('Microsoft YaHei UI'),$font,[Windows.Media.Brushes]::Black)
+    $face=[Windows.Media.Typeface]::new($script:text.FontFamily,$script:text.FontStyle,$script:text.FontWeight,$script:text.FontStretch)
+    $formatted=[Windows.Media.FormattedText]::new($Message,[Globalization.CultureInfo]::CurrentUICulture,[Windows.FlowDirection]::LeftToRight,$face,$font,[Windows.Media.Brushes]::Black)
     $formatted.MaxTextWidth=184;$formatted.LineHeight=$font*1.3
     if($formatted.Height-le 112){break}
   }

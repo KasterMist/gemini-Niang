@@ -38,6 +38,9 @@ if($Case-eq 'Pool'){
   $large=@(for($i=0;$i-lt 5001;$i++){@{text="row$i";weight=1}})
   Assert-Rejected {Save-WidgetQuotes $StateDir $large} 'over 5000 unique quotes rejected'
   Assert-Service (![IO.File]::Exists((Join-Path $StateDir 'quotes.json'))) 'oversized rejection leaves reset state unchanged'
+  $huge=@(for($i=0;$i-lt 2000;$i++){@{text=(('星'*190)+$i);weight=1}})
+  Assert-Rejected {Save-WidgetQuotes $StateDir $huge} 'encoded UTF8 byte limit checked before write'
+  Assert-Service (![IO.File]::Exists((Join-Path $StateDir ('quotes.json.'+$PID+'.tmp')))) 'failed byte-limit save leaves no temporary file'
 }
 if($Case-eq 'Scheduler'){
   Initialize-WidgetAutoQuoteSettings $script:prefs
@@ -94,6 +97,13 @@ if($Case-eq 'Placement'){
   . (Join-Path $root 'desktop/native.ps1')
   $area=[GeminiNiangNative]::WorkArea(100000,100000)
   Assert-Service ($area.right-gt $area.left -and $area.bottom-gt $area.top) 'real nearest-monitor work area available'
+  $ast=[Management.Automation.Language.Parser]::ParseFile((Join-Path $root 'desktop/GeminiNiang.ps1'),[ref]$null,[ref]$null)
+  $fn=$ast.Find({param($node)$node-is [Management.Automation.Language.FunctionDefinitionAst]-and $node.Name-eq 'Update-Host'},$true)
+  . ([scriptblock]::Create($fn.Extent.Text))
+  $script:dragging=$true
+  # Native calls would fail here without the early return: there is no window/owner.
+  Update-Host
+  Assert-Service $true 'actual host updater returns before repositioning while dragging'
 }
 $result=@{ok=$true;case=$Case;checks=$script:checks.ToArray()}
 $result|ConvertTo-Json -Depth 5 | Set-Content (Join-Path $StateDir ($Case+'-result.json')) -Encoding UTF8

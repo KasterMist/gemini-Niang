@@ -43,7 +43,7 @@ if(Test-Path -LiteralPath $file){
   foreach($property in $original.PSObject.Properties){$config[$property.Name]=$property.Value}
   $backup=$file+'.'+[DateTime]::UtcNow.ToString('yyyyMMddHHmmssfff')+'.bak';Copy-Item -LiteralPath $file -Destination $backup
 }
-$config.agyPath=$AgyPath;$config.nodePath=$node.Source;$config.version='0.3.1'
+$config.agyPath=$AgyPath;$config.nodePath=$node.Source;$config.version='0.3.2'
 try{
   $temp=$file+'.'+[Guid]::NewGuid().ToString('N')+'.tmp'
   [IO.File]::WriteAllText($temp,($config|ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
