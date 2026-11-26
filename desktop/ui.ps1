@@ -11,6 +11,7 @@ function Set-GeminiBubble([bool]$visible,[switch]$Transient) {
   if(!$Transient){$script:prefs.collapsed=!$visible;$script:noticeUntil=[DateTime]::MinValue;$script:noticeRestorePending=$false;$script:autoQuoteUntil=0}
 }
 function Set-GeminiSize {
+  Stop-GeminiSystemRhythm
   # Upstream 378-unit design canvas; retain existing user's character-size preference.
   $script:window.Width=[Math]::Round(378*$script:prefs.size/208)
   $script:window.Height=$script:window.Width
@@ -62,7 +63,7 @@ function Initialize-GeminiUi {
   $null=Add-GeminiItem $script:menu '换一句台词' {Show-GeminiQuote}
   Add-GeminiDivider
   $shape=Add-GeminiItem $script:menu '更换形象' $null
-  foreach($pair in @(@('bust','半身近景'),@('full','正面全身'),@('side','侧面全身'),@('back','背面全身'))){$item=Add-GeminiItem $shape $pair[1] {$script:prefs.view=$this.Uid;Save-Preferences};$item.Uid=$pair[0];$item.IsCheckable=$true}
+  foreach($pair in @(@('bust','半身近景'),@('full','正面全身'),@('side','侧面全身'),@('back','背面全身'))){$item=Add-GeminiItem $shape $pair[1] {Stop-GeminiSystemRhythm;$script:prefs.view=$this.Uid;Save-Preferences};$item.Uid=$pair[0];$item.IsCheckable=$true}
   $script:shapeMenu=$shape
   $script:actionMenu=Add-GeminiItem $script:menu '动作选择' $null
   $labels=@('待机','眨眼','招手','开心','思考','困倦')
@@ -87,6 +88,11 @@ function Initialize-GeminiUi {
   $null=Add-GeminiItem $script:musicMenu '停止播放与律动' {Stop-GeminiMusic}
   $script:musicVolumeMenu=Add-GeminiItem $script:musicMenu '音乐音量' $null
   foreach($v in @(0,25,35,50,75,100)){$item=Add-GeminiItem $script:musicVolumeMenu ($v.ToString()+'%') {Set-GeminiMusicVolume ([double]$this.Uid/100)};$item.Uid=[string]$v;$item.IsCheckable=$true}
+  $script:systemRhythmMenu=Add-GeminiItem $script:menu '音乐律动（系统声音）' $null
+  $script:systemRhythmItem=Add-GeminiItem $script:systemRhythmMenu '开启系统声音监听与摆锤…' {Invoke-GeminiSystemRhythm};$script:systemRhythmItem.IsCheckable=$true
+  $script:systemRhythmStatus=Add-GeminiItem $script:systemRhythmMenu '系统监听已关闭' $null;$script:systemRhythmStatus.IsEnabled=$false
+  $null=Add-GeminiItem $script:systemRhythmMenu '停止监听与摆锤' {Stop-GeminiSystemRhythm}
+  if($TestMode){$null=Add-GeminiItem $script:systemRhythmMenu '验收：合成节拍摆锤（不监听）' {Set-GeminiSystemRhythm $true -Synthetic}}
   $script:groupMenu=Add-GeminiItem $script:menu '额度模型组' $null
   $script:quoteEditorItem=Add-GeminiItem $script:menu '编辑我的语录' {Open-GeminiQuoteEditor}
   $script:autoQuoteMenu=Add-GeminiItem $script:menu '自动语录' $null
@@ -117,6 +123,8 @@ function Sync-GeminiMenu {
   foreach($item in $script:musicVolumeMenu.Items){$item.IsChecked=[Math]::Abs([double]$item.Uid/100-$script:prefs.musicVolume)-lt .001}
   $script:musicStatus.Header=switch($script:music.mode){'loading'{'正在分析本地 WAV…'}'opening'{'正在打开播放器…'}'playing'{'播放中 · 文件能量律动'}'paused'{'已暂停'}'paused-hidden'{'宿主隐藏，已暂停；请手动继续'}'ended'{'播放结束'}'error'{$script:music.lastError}default{'未播放 · 不监听系统音频'}}
   $script:musicPause.IsEnabled=$script:music.mode-in @('playing','paused','paused-hidden','ended')
+  $active=Test-GeminiSystemRhythm;$script:systemRhythmItem.IsChecked=$active
+  $script:systemRhythmStatus.Header=if($active-and $script:rhythmSynthetic){'合成节拍验收中（未监听）'}elseif($active-and $script:systemRhythm.Audio-and $script:systemRhythm.Audio.Error){'输出设备暂不可用，请检查'}elseif($active){'系统播放监听中 · 不含麦克风'}elseif($script:rhythmError){$script:rhythmError}else{'系统监听已关闭'}
   $script:autoQuoteItem.IsChecked=$script:autoQuoteEnabled
   foreach($item in $script:autoQuoteMenu.Items){if($item.Uid){$item.IsChecked=[int]$item.Uid-eq $script:autoQuoteIntervalSeconds}}
   $script:groupMenu.Items.Clear();$usage=Read-Json (Join-Path $script:stateDir 'usage.json')

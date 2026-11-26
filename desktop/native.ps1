@@ -5,6 +5,9 @@ public sealed class GeminiHost { public long handle;public int pid;public int le
 public static class GeminiNiangNative {
  public delegate bool EnumProc(IntPtr h,IntPtr p);
  [StructLayout(LayoutKind.Sequential)]public struct Rect{public int Left,Top,Right,Bottom;}
+ [StructLayout(LayoutKind.Sequential)]public struct Point{public int X,Y;}
+ [DllImport("user32.dll")]static extern bool GetCursorPos(out Point point);
+ [DllImport("user32.dll")]static extern uint GetDpiForWindow(IntPtr window);
  [StructLayout(LayoutKind.Sequential)]public class MonitorInfo {public int size=Marshal.SizeOf(typeof(MonitorInfo));public Rect monitor;public Rect work;public uint flags;}
  [DllImport("user32.dll")]static extern IntPtr MonitorFromRect(ref Rect rect,uint flags);
  [DllImport("user32.dll")]static extern bool GetMonitorInfo(IntPtr monitor,[In,Out] MonitorInfo info);
@@ -38,6 +41,8 @@ public static class GeminiNiangNative {
   return hosts.Count>0?hosts[0]:null;
  }
  public static Rect Frame(long handle){Rect r;GetWindowRect(new IntPtr(handle),out r);return r;}
+ public static Point Cursor(){Point p;GetCursorPos(out p);return p;}
+ public static uint Dpi(long handle){return GetDpiForWindow(new IntPtr(handle));}
  public static Rect WorkArea(int x,int y){var r=new Rect{Left=x,Top=y,Right=x+1,Bottom=y+1};var info=new MonitorInfo();if(!GetMonitorInfo(MonitorFromRect(ref r,2),info))throw new InvalidOperationException("Monitor work area unavailable");return info.work;}
  public static void Move(long handle,int x,int y){SetWindowPos(new IntPtr(handle),IntPtr.Zero,x,y,0,0,0x0015);}
 }

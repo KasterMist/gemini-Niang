@@ -65,8 +65,9 @@ function Start-Refresh {
   $script:lastRefresh=[DateTime]::UtcNow
 }
 $script:ui.Refresh.Add_Click({Start-Refresh})
-$script:avatar.Add_MouseLeftButtonDown({
+$script:avatar.Add_MouseLeftButtonDown({param($sender,$event)
   Play-WidgetPressSound
+  if(Test-GeminiSystemRhythm){$p=[GeminiNiangNative]::Cursor();$null=$script:avatar.CaptureMouse();$script:systemRhythm.BeginHold($p.X,$p.Y);$event.Handled=$true;return}
   $before=[GeminiNiangNative]::Frame($script:owner.Handle.ToInt64())
   $script:dragging=$true
   try{$script:window.DragMove()}finally{$script:dragging=$false;Play-WidgetReleaseSound}
@@ -76,6 +77,9 @@ $script:avatar.Add_MouseLeftButtonDown({
     Set-GeminiBubble (-not ($script:bubble.Visibility-eq 'Visible'));if($script:bubble.Visibility-eq 'Visible'){$script:bubbleMode='quota';Start-Refresh};Save-Preferences
   }
 })
+$script:avatar.Add_MouseLeftButtonUp({param($sender,$event)if((Test-GeminiSystemRhythm)-and $script:systemRhythm.Motion.Held){$script:systemRhythm.EndHold();$script:avatar.ReleaseMouseCapture();Play-WidgetReleaseSound;$event.Handled=$true}})
+$script:avatar.Add_LostMouseCapture({if((Test-GeminiSystemRhythm)-and $script:systemRhythm.Motion.Held){$script:systemRhythm.EndHold()}})
+$script:window.Add_DpiChanged({$script:desktopRestored=$false})
 function Update-Host {
   if($script:dragging){return}
   $hostWindow=if($script:prefs.followHost){[GeminiNiangNative]::FindHost($HostExecutablePath,$script:hostHandle)}else{$null}
@@ -86,11 +90,11 @@ function Update-Host {
     if(!$script:window.IsVisible){$script:window.Show()}
     $rect=[GeminiNiangNative]::Frame($script:owner.Handle.ToInt64())
     $position=Get-GeminiPlacement $hostWindow ($rect.Right-$rect.Left) ($rect.Bottom-$rect.Top) ($hostWindow.right-($rect.Right-$rect.Left)-$script:prefs.right) ($hostWindow.bottom-($rect.Bottom-$rect.Top)-$script:prefs.bottom)
-    [GeminiNiangNative]::Move($script:owner.Handle.ToInt64(),$position.x,$position.y)
+    if(!(Test-GeminiSystemRhythm)){[GeminiNiangNative]::Move($script:owner.Handle.ToInt64(),$position.x,$position.y)}
   }else{
     $script:owner.Owner=[IntPtr]::Zero;$script:hostHandle=0L
     if(!$script:window.IsVisible){$script:window.Show()}
-    if(!$script:desktopRestored){
+    if(!$script:desktopRestored-and !(Test-GeminiSystemRhythm)){
       $rect=[GeminiNiangNative]::Frame($script:owner.Handle.ToInt64());$x=$rect.left;$y=$rect.top
       if($script:prefs.ContainsKey('desktopLeft')){$x=$script:prefs.desktopLeft};if($script:prefs.ContainsKey('desktopTop')){$y=$script:prefs.desktopTop}
       $bounds=[GeminiNiangNative]::WorkArea($x,$y);$position=Get-GeminiPlacement $bounds ($rect.right-$rect.left) ($rect.bottom-$rect.top) $x $y
@@ -127,6 +131,7 @@ $script:timer.Add_Tick({
       'sleep'{$sy=1+.008*[Math]::Sin($phase);$angle=.45*[Math]::Sin($phase)}
     }
     Update-GeminiMusic
+    Update-GeminiSystemRhythm
     if($script:music.mode-eq 'playing'-and !$script:prefs.paused-and !$script:dragging-and [DateTime]::UtcNow-ge $script:noticeUntil){
       $musicMotion=Get-GeminiMusicMotion (Get-GeminiMusicLevel $script:music.player.Position.TotalSeconds)
       $y+=$musicMotion.y;$sy*=$musicMotion.scale;$angle+=$musicMotion.angle
@@ -134,7 +139,7 @@ $script:timer.Add_Tick({
     $script:avatar.Source=$script:images[($script:prefs.view+'-'+$pose)]
     $script:scale.ScaleX=1;$script:scale.ScaleY=$sy;$script:rotate.Angle=$angle;$script:translate.Y=$y*$script:prefs.size/512
     if(($script:ticks%5)-eq 0){Update-Host;Update-Events;Update-GeminiScenes;Update-Status}
-    if(($script:ticks%20)-eq 0){Write-Json (Join-Path $script:stateDir 'widget-runtime.json') @{version=$script:appVersion;pid=$PID;handle=$script:owner.Handle.ToInt64();host=$script:hostHandle;view=$script:prefs.view;action=$action;paused=$script:prefs.paused;autoQuoteEnabled=$script:autoQuoteEnabled;soundOn=$script:soundOn;audioReady=[bool]$script:geminiNiangAudio;musicMode=$script:music.mode;testMode=[bool]$TestMode;nativeVisible=[GeminiNiangNative]::IsWindowVisible($script:owner.Handle);noticeActive=([DateTime]::UtcNow-lt $script:noticeUntil);bubbleVisible=($script:bubble.Visibility-eq 'Visible');at=[DateTime]::UtcNow.ToString('o')}}
+    if(($script:ticks%20)-eq 0){Write-Json (Join-Path $script:stateDir 'widget-runtime.json') @{version=$script:appVersion;pid=$PID;handle=$script:owner.Handle.ToInt64();host=$script:hostHandle;view=$script:prefs.view;action=$action;paused=$script:prefs.paused;autoQuoteEnabled=$script:autoQuoteEnabled;soundOn=$script:soundOn;audioReady=[bool]$script:geminiNiangAudio;musicMode=$script:music.mode;systemRhythmActive=(Test-GeminiSystemRhythm);rhythmSynthetic=[bool]$script:rhythmSynthetic;testMode=[bool]$TestMode;nativeVisible=[GeminiNiangNative]::IsWindowVisible($script:owner.Handle);noticeActive=([DateTime]::UtcNow-lt $script:noticeUntil);bubbleVisible=($script:bubble.Visibility-eq 'Visible');at=[DateTime]::UtcNow.ToString('o')}}
     if(([DateTime]::UtcNow-$script:lastRefresh).TotalSeconds-ge 120){Start-Refresh}
     if($AutoCloseSeconds-gt 0-and ([DateTime]::UtcNow-$script:started).TotalSeconds-ge $AutoCloseSeconds){$script:window.Close()}
     $script:ticks++

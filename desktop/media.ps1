@@ -1,5 +1,6 @@
 ﻿# Gemini-Niang local media controller. No recording devices or loopback capture.
 . (Join-Path $PSScriptRoot 'audio.ps1')
+. (Join-Path $PSScriptRoot 'system-rhythm.ps1')
 function Initialize-GeminiMedia {
   $script:soundOn=($script:prefs.soundOn-eq $true)
   $script:soundVolume=if($null-ne $script:prefs.soundVolume){[double]$script:prefs.soundVolume}else{.35}
@@ -32,7 +33,7 @@ function Stop-GeminiMusic {
 function Start-GeminiMusic([string]$Source) {
   if(!$script:window.IsVisible){throw '请先显示挂件，再选择音乐。'}
   if(!$Source-or $Source.StartsWith('\\')-or ![IO.Path]::IsPathRooted($Source)-or ![IO.File]::Exists($Source)){throw '请选择本机上的 WAV 文件。'}
-  Stop-GeminiMusic;$script:music.lastError=$null
+  Stop-GeminiSystemRhythm;Stop-GeminiMusic;$script:music.lastError=$null
   $cache=Join-Path $script:stateDir 'music-cache';$null=[IO.Directory]::CreateDirectory($cache)
   if((Get-Item -LiteralPath $cache).Attributes-band [IO.FileAttributes]::ReparsePoint){throw '音乐缓存目录不能是链接。'}
   $target=Join-Path $cache ([Guid]::NewGuid().ToString('N')+'.wav')
@@ -106,4 +107,4 @@ function Invoke-GeminiMediaAction([string]$Action) {
   }catch{[Windows.MessageBox]::Show($script:window,$_.Exception.Message,'Gemini 娘 · 本地媒体',[Windows.MessageBoxButton]::OK,[Windows.MessageBoxImage]::Warning)|Out-Null}
   finally{$script:audioDialogOpen=$false}
 }
-function Close-GeminiMedia {Stop-GeminiMusic;Close-WidgetAudio}
+function Close-GeminiMedia {Stop-GeminiSystemRhythm;Stop-GeminiMusic;Close-WidgetAudio}
