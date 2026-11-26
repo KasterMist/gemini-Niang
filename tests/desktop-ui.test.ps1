@@ -90,6 +90,9 @@ try {
   Set-GeminiSystemRhythm $true -Synthetic;$script:window.Hide();Update-GeminiSystemRhythm
   Assert-Ui (!(Test-GeminiSystemRhythm)) 'hiding widget disposes the system rhythm controller'
   $script:window.Show()
+  Set-GeminiSystemRhythm $true -Synthetic;$script:window.WindowState=[Windows.WindowState]::Minimized;Update-GeminiSystemRhythm
+  Assert-Ui (!(Test-GeminiSystemRhythm)) 'minimizing widget disposes the system rhythm controller'
+  $script:window.WindowState=[Windows.WindowState]::Normal
   Click-Item $script:quoteEditorItem
   Assert-Ui $script:quoteEditor.IsVisible 'quote editor opens from real menu event'
   $script:quoteEditor.FindName('Lines').Text='0 | 无效权重'

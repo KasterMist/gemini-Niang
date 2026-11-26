@@ -16,7 +16,7 @@ function Set-GeminiSystemRhythm([bool]$Enabled,[switch]$Synthetic) {
   if(!$Enabled){Stop-GeminiSystemRhythm;return}
   if(Test-GeminiSystemRhythm){return}
   if($Synthetic-and !$TestMode){throw '合成节拍仅限验收模式。'}
-  if(!$script:window.IsVisible-or $script:prefs.paused){throw '请先显示挂件并取消暂停动画。'}
+  if(!$script:window.IsVisible-or $script:window.WindowState-eq [Windows.WindowState]::Minimized-or $script:prefs.paused){throw '请先显示挂件并取消暂停动画。'}
   Initialize-GeminiRhythmTypes
   Stop-GeminiMusic
   $script:rhythmError=$null;$script:rhythmSynthetic=[bool]$Synthetic
@@ -51,7 +51,7 @@ function Invoke-GeminiSystemRhythm {
 function Update-GeminiSystemRhythm {
   if(!$script:systemRhythm){return}
   if(!$script:systemRhythm.Enabled){$script:rhythmError='系统律动已停止，请重试。';Stop-GeminiSystemRhythm;return}
-  if(!$script:window.IsVisible-or $script:prefs.paused){$script:rhythmError='挂件隐藏或动画暂停，监听已停止；需手动重新开启。';Stop-GeminiSystemRhythm;return}
+  if(!$script:window.IsVisible-or $script:window.WindowState-eq [Windows.WindowState]::Minimized-or $script:prefs.paused){$script:rhythmError='挂件隐藏、最小化或动画暂停，监听已停止；需手动重新开启。';Stop-GeminiSystemRhythm;return}
   $rect=[GeminiNiangNative]::Frame($script:owner.Handle.ToInt64())
   $hostFrame=if($script:prefs.followHost-and $script:hostHandle){[GeminiNiangNative]::Frame($script:hostHandle)}else{[GeminiNiangNative]::WorkArea($rect.left,$rect.top)}
   $x=$rect.left;$y=$rect.top
