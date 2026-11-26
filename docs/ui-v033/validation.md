@@ -24,7 +24,7 @@
 | UI | 41 个 WPF 控件断言，含声音开关、两套独立音量、停止状态禁用暂停、主题子菜单打开，ui-checks.json |
 | Node 文件/解析测试 | 静音 RMS 为 0、不同音量 RMS 跟随比例；损坏 RIFF、时间/体积上限、超大稀疏文件按元数据拒绝、既有输出不覆盖、源文件不改写 |
 | 素材重建 | node scripts/build-sounds.mjs 前后两张 WAV 的 SHA256 相同 |
-| 本机更新 | 当前官方 CLI 1.5.17 的严格插件校验通过；plugin list 显示 gemini-niang enabled、v0.3.3，复制后逐文件 SHA256 一致 |
+| 本机更新 | 初次更新 CLI 1.5.17、最终重启 CLI 1.5.18 的严格插件校验均通过；plugin list 显示 gemini-niang enabled、v0.3.3，复制后逐文件 SHA256 一致 |
 | 正式运行 | version=0.3.3、testMode=false、soundOn=false、audioReady=true、musicMode=stopped，local-runtime.json；无 widget-error.txt |
 
 上述专项断言包含在相应 Node 测试内，不能与 56 项相加冒充更多独立测试。音频后端在其他机器若不可用，测试会验证明确错误状态；本机专项记录明确为实际静音后端可用。audioReady 只表示 PCM 预载就绪，不代表所有输出设备都已人工听过。
@@ -52,3 +52,5 @@ sound-menu.png、music-menu.png、menu.png 等均为真实 WPF Visual 渲染。�
 ## 分阶段提交与 CI
 
 主体已提交并推送 50ba4f6；最终 UI/部署/验收另行提交。最新 GitHub 工作流以相应提交的实际状态为准，不以本地通过替代云端结果。
+
+最终代码/验收提交 4b568f2 已推送，本机再次重启确认正式 v0.3.3、音效关闭、音乐停止。两个观察时点的 CLI 自报版本不同，本轮未手动替换 CLI。50ba4f6 的 Gemini Windows/Linux CI 已成功；4b568f2 的同一工作流仍在运行，上游遗留工作流排队中。
