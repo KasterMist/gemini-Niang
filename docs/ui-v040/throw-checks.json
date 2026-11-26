@@ -1,0 +1,264 @@
+{
+    "passed":  true,
+    "cases":  36,
+    "scenarios":  [
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  5,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.9660821315415
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  20,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.9660821315415
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  40,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.9660821315415
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  60,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.9660821315415
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  5,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.04176299567348
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  20,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.04176299567348
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  40,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.04176299567348
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  60,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.04176299567348
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  5,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.27392680584853
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  20,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.27392680584853
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  40,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.27392680584853
+                      },
+                      {
+                          "dpi":  1,
+                          "releaseGapMs":  60,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.27392680584853
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  5,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.96608213154229
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  20,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.96608213154229
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  40,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.96608213154229
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  60,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.96608213154229
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  5,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.041762995674
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  20,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.041762995674
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  40,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.041762995674
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  60,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.041762995674
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  5,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.2739268058491
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  20,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.2739268058491
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  40,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.2739268058491
+                      },
+                      {
+                          "dpi":  1.5,
+                          "releaseGapMs":  60,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.2739268058491
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  5,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.9660821315415
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  20,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.9660821315415
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  40,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.9660821315415
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  60,
+                          "frameSeconds":  0.033333333333333333,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  793.9660821315415
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  5,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.04176299567348
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  20,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.04176299567348
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  40,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.04176299567348
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  60,
+                          "frameSeconds":  0.016666666666666666,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  775.04176299567348
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  5,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.27392680584853
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  20,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.27392680584853
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  40,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.27392680584853
+                      },
+                      {
+                          "dpi":  2,
+                          "releaseGapMs":  60,
+                          "frameSeconds":  0.0069444444444444441,
+                          "speedRetained":  1,
+                          "oneSecondTravelDip":  780.27392680584853
+                      }
+                  ],
+    "deliberateStationaryHoldClearsMomentum":  true,
+    "failures":  [
+
+                 ],
+    "minSpeedRetention":  1,
+    "minOneSecondTravelDip":  775.04176299567348
+}

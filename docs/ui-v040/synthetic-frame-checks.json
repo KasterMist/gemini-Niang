@@ -1,0 +1,86 @@
+{
+  "ok": true,
+  "samples": [
+    {
+      "capturesSystemAudio": false,
+      "at": "2026-11-26T15:31:22.1657045Z",
+      "perMonitorV2": true,
+      "work": {
+        "left": 0,
+        "right": 3840,
+        "bottom": 2088,
+        "top": 0
+      },
+      "figure": {
+        "left": 827,
+        "right": 1036,
+        "bottom": 1022,
+        "top": 682
+      },
+      "version": "0.4.0",
+      "renderPerMonitorV2": true,
+      "dpi": 144
+    },
+    {
+      "capturesSystemAudio": false,
+      "at": "2026-11-26T15:31:24.4531004Z",
+      "perMonitorV2": true,
+      "work": {
+        "left": 0,
+        "right": 3840,
+        "bottom": 2088,
+        "top": 0
+      },
+      "figure": {
+        "left": 827,
+        "right": 1036,
+        "bottom": 2025,
+        "top": 1681
+      },
+      "version": "0.4.0",
+      "renderPerMonitorV2": true,
+      "dpi": 144
+    },
+    {
+      "capturesSystemAudio": false,
+      "at": "2026-11-26T15:31:26.6620699Z",
+      "perMonitorV2": true,
+      "work": {
+        "left": 0,
+        "right": 3840,
+        "bottom": 2088,
+        "top": 0
+      },
+      "figure": {
+        "left": 783,
+        "right": 992,
+        "bottom": 2088,
+        "top": 1876
+      },
+      "version": "0.4.0",
+      "renderPerMonitorV2": true,
+      "dpi": 144
+    },
+    {
+      "capturesSystemAudio": false,
+      "at": "2026-11-26T15:31:28.8707628Z",
+      "perMonitorV2": true,
+      "work": {
+        "left": 0,
+        "right": 3840,
+        "bottom": 2088,
+        "top": 0
+      },
+      "figure": {
+        "left": 701,
+        "right": 910,
+        "bottom": 2088,
+        "top": 1699
+      },
+      "version": "0.4.0",
+      "renderPerMonitorV2": true,
+      "dpi": 144
+    }
+  ],
+  "source": "synthetic-only"
+}

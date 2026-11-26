@@ -1,0 +1,38 @@
+{
+    "scenarios":  [
+                      {
+                          "ExpectedBpm":  90,
+                          "Bpm":  89.900254614413228,
+                          "MaxPhaseError":  0.0086336700523625964,
+                          "OffGridEvents":  18,
+                          "Beats":  16,
+                          "Locked":  true,
+                          "QuietStopped":  true,
+                          "IsolatedSoundsIgnored":  true
+                      },
+                      {
+                          "ExpectedBpm":  120,
+                          "Bpm":  119.99999999999997,
+                          "MaxPhaseError":  1.7763568394002505E-15,
+                          "OffGridEvents":  18,
+                          "Beats":  15,
+                          "Locked":  true,
+                          "QuietStopped":  true,
+                          "IsolatedSoundsIgnored":  true
+                      },
+                      {
+                          "ExpectedBpm":  170,
+                          "Bpm":  170.41950861857293,
+                          "MaxPhaseError":  0.0091784207374221438,
+                          "OffGridEvents":  18,
+                          "Beats":  16,
+                          "Locked":  true,
+                          "QuietStopped":  true,
+                          "IsolatedSoundsIgnored":  true
+                      }
+                  ],
+    "noFreeRunningAfterDrums":  true,
+    "irregularLoudSoundsIgnored":  true,
+    "tempoChange":  true,
+    "passed":  true
+}

@@ -1,0 +1,135 @@
+{
+  "baselineCommit": "2abab61ba815f6082dee53185711cd00855eed3b",
+  "testedCodeCommit": "a8414e43600f53a52195fa992ceab11b0628b674",
+  "originals": [
+    {
+      "path": "desktop/GeminiNiang.ps1",
+      "sha256": "dac2621bd1edbd1315b85ae46821a64b7c083e7c03750411d511fe964e3829cc",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "desktop/ui.ps1",
+      "sha256": "8e1902f9790b290bc30c44a199d5a73bd36553f15637c3250aa92b0c544ef773",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "desktop/native.ps1",
+      "sha256": "6d3fea04cfa5ee1bc6b22cdb56336fa977d13d46afcaf4e804084ef17efd76b8",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "desktop/media.ps1",
+      "sha256": "c8eaf78f2ea7b12835307f43bbd5277a1042c709517546b44948aa6536464b60",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "desktop/scenes.ps1",
+      "sha256": "f4cd617523c41ac88fc8bb208e875cce9f657b0a2457d15b9bf984cf94f5aafb",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "desktop/placement.ps1",
+      "sha256": "34bdb2647630771a7c9c31f088e84473ac8be3aadadece5e928ba26fba790475",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "scripts/Install-GeminiNiang.ps1",
+      "sha256": "98927b0e5e293d0f21ca25c6cae9f2f00431b4bff9a97b44804f263b09640d2f",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "打开Gemini娘.cmd",
+      "sha256": "53a08fad0c1446c37ab7204b6845d8eba7ffe58f7b8ade3c6d662731ce13c52d",
+      "extraCopyRecoveryVerified": true
+    }
+  ],
+  "current": [
+    {
+      "path": "desktop/GeminiNiang.ps1",
+      "sha256": "00d8b4374c967e9561da8bf8bae1708033b9172290b18813c9e562ee1ba584d0"
+    },
+    {
+      "path": "desktop/ui.ps1",
+      "sha256": "24b6e4351fef25db21852cd8329d6c5f65a9e0ff85ec525b27bf296d22d14ddf"
+    },
+    {
+      "path": "desktop/native.ps1",
+      "sha256": "21e0940065e089124c0c3d617004c07b349210b633b39482a79b2dc697651b2d"
+    },
+    {
+      "path": "desktop/media.ps1",
+      "sha256": "8c33857a513414ced795d49cb67c5746cb7811d51ca417914e99e025cf461eab"
+    },
+    {
+      "path": "desktop/scenes.ps1",
+      "sha256": "7b362591e205ca2d3e96222fbbdfd3a3e4b5fda41321805bd0fea138e63f3e8e"
+    },
+    {
+      "path": "desktop/placement.ps1",
+      "sha256": "752ec07edc2854f946bb31cb5aa612490a062e146cb0dd44545032f053f5271b"
+    },
+    {
+      "path": "desktop/system-rhythm.ps1",
+      "sha256": "bfa9be1f3d2d4168b870b03dbb19ca297697ba0018d5042ad22c59e5b515be69"
+    },
+    {
+      "path": "desktop/music-audio.cs",
+      "sha256": "3854b0073f566f52becbf043e5dbe13f004520f070553e8a756820f0f77998f3"
+    },
+    {
+      "path": "desktop/music-visual.cs",
+      "sha256": "61cd7197e1c8bc98130de7595c6482a2205a1e440ff87e5acb35fbe6b606c67d"
+    },
+    {
+      "path": "desktop/music-anchor.cs",
+      "sha256": "08d2fa114f491ec1edc239f1eda8a8f9a9769709f54d921660743e1f758c87a4"
+    },
+    {
+      "path": "desktop/Host.cs",
+      "sha256": "b14d33f562734382a12fb88d7d1698e41d0c418595ac58b1c00649170e695e34"
+    },
+    {
+      "path": "desktop/Host.manifest",
+      "sha256": "55e0412cea2a75ef4afb0fefb4715db48eb79fd6c1677411e03a13fb3c513486"
+    },
+    {
+      "path": "scripts/Build-DesktopHost.ps1",
+      "sha256": "83c0bf0a4edeb2a457035f9eaf8ce8715365b5f9eef58cb16d1f76ad7f55a274"
+    },
+    {
+      "path": "scripts/Start-GeminiNiang.ps1",
+      "sha256": "eb9b238a550bf840528530e1b88998d964d69d53c522d2b8f87fd293cd122b07"
+    },
+    {
+      "path": "scripts/Install-GeminiNiang.ps1",
+      "sha256": "5207e1812a34da921e3934a02211ca2e90eff4c1ba3e503b3cb834c61f93e398"
+    },
+    {
+      "path": "scripts/Preview-Rhythm.ps1",
+      "sha256": "a4f00209a7777c1e01f98f098b9bbacc51fe5439bf45f096391d4abf90b26ed4"
+    },
+    {
+      "path": "打开Gemini娘.cmd",
+      "sha256": "0760520bb47f41169a50a5fd46b6f2d305a3fedb2fe8ee1582dc02ac03b1ba76"
+    },
+    {
+      "path": "预览摆锤（不监听）.cmd",
+      "sha256": "b3b654ce25143a2ae1a4a87ce32c44362e68dd459aeafaf79ca378da075d4c3d"
+    }
+  ],
+  "upstream": [
+    {
+      "path": "gpt-niang-usage/runtime/music-audio.cs",
+      "sha256": "dc8e5e753fe263a77537e5cb96cc4f69e0a0c0ed3a3928bebd9453e422aeda36"
+    },
+    {
+      "path": "gpt-niang-usage/runtime/music-visual.cs",
+      "sha256": "72b9d38320d068d8f0ab903d0b0ed9ba91ba3538e1efc9e59ad7e66f538155fb"
+    }
+  ],
+  "nativeHost": {
+    "name": "GeminiNiang-49bfcbeec14c.exe",
+    "sourceHash": "49bfcbeec14c7f04f2473de64a692c26bb114a4026b4ec79f622e08a45da4a87",
+    "binaryHash": "e886c99753ae368b74b63cc277a3f1fbd58c6456214d1bb917f5cfce992ebec6"
+  }
+}

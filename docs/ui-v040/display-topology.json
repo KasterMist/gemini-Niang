@@ -1,0 +1,15 @@
+﻿{
+    "context":  "PerMonitorV2 physical pixels",
+    "monitorCount":  1,
+    "screens":  [
+                    {
+                        "workWidth":  3840,
+                        "left":  0,
+                        "width":  3840,
+                        "top":  0,
+                        "workHeight":  2088,
+                        "height":  2160,
+                        "primary":  true
+                    }
+                ]
+}

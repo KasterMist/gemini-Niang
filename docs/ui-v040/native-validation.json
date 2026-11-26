@@ -1,0 +1,39 @@
+{
+  "realMenuButtonClick": true,
+  "syntheticOnly": true,
+  "systemCaptureStarted": false,
+  "realShapeSelection": true,
+  "realRightClick": true,
+  "realDesktopDrag": true,
+  "dragSavedPhysicalPixels": {
+    "left": 300,
+    "top": 225
+  },
+  "syntheticRhythmVisible": true,
+  "syntheticRhythmClosed": true,
+  "physicsMouseThrow": "not accepted: moving-window screenshot/input bounds",
+  "restartRestoresPosition": true,
+  "restoredPhysicalPixels": {
+    "left": 300,
+    "top": 225
+  },
+  "actualDpi": 144,
+  "physicalMonitorCount": 1,
+  "uiCoreCommit": "fb05502",
+  "restartVersion": "0.4.0",
+  "liveSystemCaptureTest": "not run: user requested implementation only",
+  "physicalMultiMonitorTest": "not run: only one physical display",
+  "nativeWindowCloseObserved": true,
+  "hostExitCodeVerifiedByAutomatedTest": 0,
+  "escapeStopsSyntheticStage": true,
+  "physicalDisplay": {
+    "width": 3840,
+    "height": 2160,
+    "scale": 1.5
+  },
+  "initialUnawareLogicalProbe": {
+    "width": 2560,
+    "height": 1440
+  },
+  "monitorProbeNote": "Initial dimensions were DPI-virtualized logical pixels, not physical size."
+}
