@@ -1,6 +1,6 @@
 {
   "name": "gemini-niang",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Gemini-Niang Windows desktop companion with Antigravity quota and completion integration",
   "scripts": {
     "preview": "node scripts/preview-server.mjs",

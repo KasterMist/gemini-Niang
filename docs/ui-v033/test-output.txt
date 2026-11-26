@@ -1,0 +1,68 @@
+
+> gemini-niang@0.3.3 test
+> node --test tests/*.test.mjs
+
+✔ real CLI 1.5 response shape maps fractions, reset epoch and drops private fields (1.3031ms)
+✔ reject model-generated answers, nonzero turns and unknown response shapes (0.1518ms)
+✔ reject invalid fractions without silently clamping (0.1258ms)
+✔ zero quota and absent reset are valid, empty groups do not invent quotas (0.4431ms)
+✔ provider only spawns fixed read-only usage args with no shell (0.2899ms)
+✔ provider failure modes discard possible secrets from CLI output (0.2171ms)
+✔ actual missing executable is a clean unavailable state (3.0612ms)
+✔ Stop completion requires final successful idle, not every model invocation (0.4705ms)
+✔ completion events atomically deduplicate concurrent hooks and retain only sanitized payload (17.608ms)
+✔ completion spool is bounded to 128 event files (251.2322ms)
+✔ App executionNum resets to zero: changed transcript metadata identifies repeated user turns (12.1292ms)
+✔ hook process always returns empty JSON and does not force agent continuation (261.2645ms)
+✔ atomic state updates replace files on Windows and preserve valid JSON (4.8821ms)
+✔ MCP process handshake, list and unavailable-CLI tool call (85.9591ms)
+✔ plugin configuration is self-contained, uses correct hook shape, no credential declaration (1.4643ms)
+✔ Windows PowerShell 5 syntax and native preflight (415.7918ms)
+✔ Windows WPF process loads real assets and reacts to a simulated Stop hook (3829.2475ms)
+✔ Windows launch scripts use UTF-8 BOM and plugin registration is opt-in (0.8147ms)
+✔ six actions, deterministic finite periodic motion, reduced-motion support (2.5399ms)
+✔ atlases and manifest retain real alpha and source hashes (150.0098ms)
+✔ full/idle: PNG and genuine looping multi-frame GIF (55.9774ms)
+✔ full/blink: PNG and genuine looping multi-frame GIF (48.5687ms)
+✔ full/wave: PNG and genuine looping multi-frame GIF (48.429ms)
+✔ full/happy: PNG and genuine looping multi-frame GIF (50.5134ms)
+✔ full/think: PNG and genuine looping multi-frame GIF (48.6797ms)
+✔ full/sleep: PNG and genuine looping multi-frame GIF (43.6735ms)
+✔ bust/idle: PNG and genuine looping multi-frame GIF (47.9721ms)
+✔ bust/blink: PNG and genuine looping multi-frame GIF (49.8306ms)
+✔ bust/wave: PNG and genuine looping multi-frame GIF (47.1688ms)
+✔ bust/happy: PNG and genuine looping multi-frame GIF (46.9719ms)
+✔ bust/think: PNG and genuine looping multi-frame GIF (50.0832ms)
+✔ bust/sleep: PNG and genuine looping multi-frame GIF (47.3862ms)
+✔ side/idle: PNG and genuine looping multi-frame GIF (40.2172ms)
+✔ side/blink: PNG and genuine looping multi-frame GIF (38.0067ms)
+✔ side/wave: PNG and genuine looping multi-frame GIF (39.9918ms)
+✔ side/happy: PNG and genuine looping multi-frame GIF (37.3712ms)
+✔ side/think: PNG and genuine looping multi-frame GIF (38.6548ms)
+✔ side/sleep: PNG and genuine looping multi-frame GIF (38.7596ms)
+✔ back/idle: PNG and genuine looping multi-frame GIF (48.0371ms)
+✔ back/blink: PNG and genuine looping multi-frame GIF (40.1859ms)
+✔ back/wave: PNG and genuine looping multi-frame GIF (44.5403ms)
+✔ back/happy: PNG and genuine looping multi-frame GIF (43.1877ms)
+✔ back/think: PNG and genuine looping multi-frame GIF (46.9587ms)
+✔ back/sleep: PNG and genuine looping multi-frame GIF (39.2113ms)
+✔ click WAV normalization preserves source and enforces bounded PCM format (5.7145ms)
+✔ music envelope follows actual PCM energy, silence remains still (5.5407ms)
+✔ encoded output caps and malformed RIFF lengths are rejected (0.3663ms)
+✔ music importer owns unique outputs and never rewrites the selected source (7.5386ms)
+✔ oversized source is rejected from file metadata with sanitized error output (74.3526ms)
+✔ Windows media controller, PCM queue and actual muted WPF playback (1978.6742ms)
+✔ Windows desktop Pool: persistence, safety and deterministic regressions (633.7153ms)
+✔ Windows desktop Scheduler: persistence, safety and deterministic regressions (407.9496ms)
+✔ Windows desktop Placement: persistence, safety and deterministic regressions (468.0279ms)
+✔ upstream bubble and menu templates retain attribution and real visual controls (4.9858ms)
+✔ Windows WPF themed UI scenes, menus and preference actions (1956.5902ms)
+✔ root redirects and all browser assets/downloads are served (396.4408ms)
+ℹ tests 56
+ℹ suites 0
+ℹ pass 56
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4959.7924

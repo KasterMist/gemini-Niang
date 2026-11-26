@@ -13,6 +13,7 @@ $script:actions=@('idle','blink','wave','happy','think','sleep')
 $script:views=@('bust','full','side','back')
 . (Join-Path $PSScriptRoot 'native.ps1')
 foreach($view in $script:views){foreach($action in $script:actions){if(!(Test-Path (Join-Path $script:assetDir "$view-$action.png"))){throw "Missing asset: $view-$action"}}}
+foreach($file in @('ui.ps1','widget.xaml','menu-resources.xaml','media.ps1','audio.ps1','audio-import.mjs','music-import.mjs','assets/press.wav','assets/release.wav')){if(!(Test-Path -LiteralPath (Join-Path $PSScriptRoot $file) -PathType Leaf)){throw "Missing desktop file: $file"}}
 if($CheckOnly){
   [pscustomobject]@{ok=$true;assets=24;stateDir=$script:stateDir;hostExecutableExists=(Test-Path -LiteralPath $HostExecutablePath);host=[GeminiNiangNative]::FindHost($HostExecutablePath,0)}|ConvertTo-Json -Depth 4
   return
@@ -133,7 +134,7 @@ $script:timer.Add_Tick({
     $script:avatar.Source=$script:images[($script:prefs.view+'-'+$pose)]
     $script:scale.ScaleX=1;$script:scale.ScaleY=$sy;$script:rotate.Angle=$angle;$script:translate.Y=$y*$script:prefs.size/512
     if(($script:ticks%5)-eq 0){Update-Host;Update-Events;Update-GeminiScenes;Update-Status}
-    if(($script:ticks%20)-eq 0){Write-Json (Join-Path $script:stateDir 'widget-runtime.json') @{version=$script:appVersion;pid=$PID;handle=$script:owner.Handle.ToInt64();host=$script:hostHandle;view=$script:prefs.view;action=$action;paused=$script:prefs.paused;autoQuoteEnabled=$script:autoQuoteEnabled;testMode=[bool]$TestMode;nativeVisible=[GeminiNiangNative]::IsWindowVisible($script:owner.Handle);noticeActive=([DateTime]::UtcNow-lt $script:noticeUntil);bubbleVisible=($script:bubble.Visibility-eq 'Visible');at=[DateTime]::UtcNow.ToString('o')}}
+    if(($script:ticks%20)-eq 0){Write-Json (Join-Path $script:stateDir 'widget-runtime.json') @{version=$script:appVersion;pid=$PID;handle=$script:owner.Handle.ToInt64();host=$script:hostHandle;view=$script:prefs.view;action=$action;paused=$script:prefs.paused;autoQuoteEnabled=$script:autoQuoteEnabled;soundOn=$script:soundOn;audioReady=[bool]$script:geminiNiangAudio;musicMode=$script:music.mode;testMode=[bool]$TestMode;nativeVisible=[GeminiNiangNative]::IsWindowVisible($script:owner.Handle);noticeActive=([DateTime]::UtcNow-lt $script:noticeUntil);bubbleVisible=($script:bubble.Visibility-eq 'Visible');at=[DateTime]::UtcNow.ToString('o')}}
     if(([DateTime]::UtcNow-$script:lastRefresh).TotalSeconds-ge 120){Start-Refresh}
     if($AutoCloseSeconds-gt 0-and ([DateTime]::UtcNow-$script:started).TotalSeconds-ge $AutoCloseSeconds){$script:window.Close()}
     $script:ticks++
@@ -147,6 +148,7 @@ try{
   $null=$app.Run()
 }finally{
   $script:timer.Stop()
+  Close-GeminiMedia
   if($script:refreshProcess){$script:refreshProcess.Dispose()}
   try{$runtime=Read-Json (Join-Path $script:stateDir 'widget-runtime.json');if($runtime.pid-eq $PID){Remove-Item -LiteralPath (Join-Path $script:stateDir 'widget-runtime.json') -ErrorAction SilentlyContinue}}catch{}
   $script:mutex.ReleaseMutex();$script:mutex.Dispose()

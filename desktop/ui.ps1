@@ -73,9 +73,10 @@ function Initialize-GeminiUi {
   $script:pauseItem=Add-GeminiItem $appearance '暂停动画' {$script:prefs.paused=$this.IsChecked;Save-Preferences};$script:pauseItem.IsCheckable=$true
   $script:soundMenu=Add-GeminiItem $script:menu '声音与点击' $null
   $script:soundItem=Add-GeminiItem $script:soundMenu '点击音效（默认关闭）' {Set-GeminiSound $this.IsChecked};$script:soundItem.IsCheckable=$true
+  $script:soundStatus=Add-GeminiItem $script:soundMenu '点击音效已关闭' $null;$script:soundStatus.IsEnabled=$false
   $script:soundVolumeMenu=Add-GeminiItem $script:soundMenu '音效音量' $null
-  foreach($v in @(0,25,50,75,100)){$item=Add-GeminiItem $script:soundVolumeMenu ($v.ToString()+'%') {Set-GeminiSoundVolume ([double]$this.Uid/100)};$item.Uid=[string]$v;$item.IsCheckable=$true}
-  $null=Add-GeminiItem $script:soundMenu '试听内置 / 当前按下音效' {Invoke-GeminiMediaAction 'preview'}
+  foreach($v in @(0,25,35,50,75,100)){$item=Add-GeminiItem $script:soundVolumeMenu ($v.ToString()+'%') {Set-GeminiSoundVolume ([double]$this.Uid/100)};$item.Uid=[string]$v;$item.IsCheckable=$true}
+  $script:soundPreview=Add-GeminiItem $script:soundMenu '试听内置 / 当前按下音效' {Invoke-GeminiMediaAction 'preview'};$script:soundPreview.ToolTip='先启用点击音效；测试模式始终静音。'
   foreach($slot in @('press','release')){$label=if($slot-eq 'press'){'选择按下音效（WAV ≤5秒）'}else{'选择松开音效（WAV ≤5秒）'};$item=Add-GeminiItem $script:soundMenu $label {Invoke-WidgetAudioAction 'import' $this.Uid};$item.Uid=$slot}
   $null=Add-GeminiItem $script:soundMenu '恢复内置音效' {Invoke-WidgetAudioAction 'builtin' ''}
   $script:musicMenu=Add-GeminiItem $script:menu '音乐律动（本地 WAV）' $null
@@ -85,7 +86,7 @@ function Initialize-GeminiUi {
   $script:musicPause=Add-GeminiItem $script:musicMenu '暂停 / 继续' {Toggle-GeminiMusic}
   $null=Add-GeminiItem $script:musicMenu '停止播放与律动' {Stop-GeminiMusic}
   $script:musicVolumeMenu=Add-GeminiItem $script:musicMenu '音乐音量' $null
-  foreach($v in @(0,25,50,75,100)){$item=Add-GeminiItem $script:musicVolumeMenu ($v.ToString()+'%') {Set-GeminiMusicVolume ([double]$this.Uid/100)};$item.Uid=[string]$v;$item.IsCheckable=$true}
+  foreach($v in @(0,25,35,50,75,100)){$item=Add-GeminiItem $script:musicVolumeMenu ($v.ToString()+'%') {Set-GeminiMusicVolume ([double]$this.Uid/100)};$item.Uid=[string]$v;$item.IsCheckable=$true}
   $script:groupMenu=Add-GeminiItem $script:menu '额度模型组' $null
   $script:quoteEditorItem=Add-GeminiItem $script:menu '编辑我的语录' {Open-GeminiQuoteEditor}
   $script:autoQuoteMenu=Add-GeminiItem $script:menu '自动语录' $null
@@ -110,6 +111,8 @@ function Sync-GeminiMenu {
   foreach($item in $script:sizeMenu.Items){if($item.Uid){$item.IsChecked=[int]$item.Uid-eq $script:prefs.size}}
   $script:pauseItem.IsChecked=$script:prefs.paused;$script:followItem.IsChecked=$script:prefs.followHost;$script:completionItem.IsChecked=$script:prefs.completion
   $script:soundItem.IsChecked=$script:soundOn
+  $script:soundStatus.Header=if(!$script:geminiNiangAudio){'音效未就绪，请检查安装文件'}elseif($script:geminiNiangAudio.Queue.Error){'音频设备播放失败，请重试'}elseif($script:geminiNiangAudio.Errors.Count-gt 0){'有音效文件不可用，请重新选择'}elseif(!$script:soundOn){'点击音效已关闭'}else{'音效已就绪'}
+  $script:soundPreview.IsEnabled=$script:soundOn-and [bool]$script:geminiNiangAudio
   foreach($item in $script:soundVolumeMenu.Items){$item.IsChecked=[Math]::Abs([double]$item.Uid/100-$script:soundVolume)-lt .001}
   foreach($item in $script:musicVolumeMenu.Items){$item.IsChecked=[Math]::Abs([double]$item.Uid/100-$script:prefs.musicVolume)-lt .001}
   $script:musicStatus.Header=switch($script:music.mode){'loading'{'正在分析本地 WAV…'}'opening'{'正在打开播放器…'}'playing'{'播放中 · 文件能量律动'}'paused'{'已暂停'}'paused-hidden'{'宿主隐藏，已暂停；请手动继续'}'ended'{'播放结束'}'error'{$script:music.lastError}default{'未播放 · 不监听系统音频'}}

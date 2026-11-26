@@ -1,0 +1,73 @@
+{
+  "baselineCommit": "e21b468",
+  "originals": [
+    {
+      "path": "desktop/GeminiNiang.ps1",
+      "sha256": "14be15a36abfe6fdfe048f9aa36e876b29e68693f601045eeb2043512956074c",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "desktop/ui.ps1",
+      "sha256": "4b75bdf42d4c5c3fe2fa791d98ed6c49a7e2d64163c5811cac15292b492fdd57",
+      "extraCopyRecoveryVerified": true
+    },
+    {
+      "path": "desktop/scenes.ps1",
+      "sha256": "113a9fa8c5b5997aa78a71df5d9359805ebc33066d21fa2f9f1252cafeca4769",
+      "extraCopyRecoveryVerified": true
+    }
+  ],
+  "current": [
+    {
+      "path": "desktop/GeminiNiang.ps1",
+      "sha256": "dac2621bd1edbd1315b85ae46821a64b7c083e7c03750411d511fe964e3829cc"
+    },
+    {
+      "path": "desktop/ui.ps1",
+      "sha256": "8e1902f9790b290bc30c44a199d5a73bd36553f15637c3250aa92b0c544ef773"
+    },
+    {
+      "path": "desktop/scenes.ps1",
+      "sha256": "f4cd617523c41ac88fc8bb208e875cce9f657b0a2457d15b9bf984cf94f5aafb"
+    },
+    {
+      "path": "desktop/audio.ps1",
+      "sha256": "ea8b130aeb1d442c48905581a772ec33a767613d9ffff0b435a35312ee44e9a4"
+    },
+    {
+      "path": "desktop/audio-import.mjs",
+      "sha256": "0551e23daec4c4f8f7ce15458e7e97aeb4672327475b859b1d71c75c9fabae4a"
+    },
+    {
+      "path": "desktop/music-import.mjs",
+      "sha256": "d072b3327bac129f084ba2dd18ed2618b0a639ce0234519b7f9dcf8265f2e58e"
+    },
+    {
+      "path": "desktop/media.ps1",
+      "sha256": "c8eaf78f2ea7b12835307f43bbd5277a1042c709517546b44948aa6536464b60"
+    },
+    {
+      "path": "desktop/assets/press.wav",
+      "sha256": "678f22a0f1e42b9937c7de1205d929263e7a6814525d244c7914de7f920afef1"
+    },
+    {
+      "path": "desktop/assets/release.wav",
+      "sha256": "b055437def70d7584a65c61ee45e998adbde0dd7557045d8a79451b7f1ee8ee1"
+    },
+    {
+      "path": "scripts/build-sounds.mjs",
+      "sha256": "7a3c7acf69ab5c2d3dcd1bfadcbc8be8926481c780bad8c86118402608fafa96"
+    }
+  ],
+  "upstream": [
+    {
+      "path": "gpt-niang-usage/runtime/audio.ps1",
+      "sha256": "fa8ec306b58def0d06c13d7882325823bb7d33a823bd09720550f4d2f5e398ef"
+    },
+    {
+      "path": "gpt-niang-usage/runtime/audio-import.mjs",
+      "sha256": "730d8d8daf95cb0203d032a94285f635a15cf2c4d5bfd724e5f9a1365b660aa7"
+    }
+  ],
+  "tonesRebuildVerified": true
+}

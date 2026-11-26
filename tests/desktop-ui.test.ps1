@@ -98,6 +98,24 @@ try {
   Set-GeminiBubble $false;$script:noticeRestorePending=$true;Set-GeminiBubble $true -Transient
   Update-GeminiScenes
   Assert-Ui ($script:bubble.Visibility-eq 'Hidden') 'completion expiry restores prior collapse in WPF'
+  Sync-GeminiMenu
+  Assert-Ui (!$script:soundOn-and !$script:soundPreview.IsEnabled) 'click sounds default off with disabled preview'
+  Assert-Ui (!$script:musicPause.IsEnabled) 'music pause disabled without a loaded track'
+  $script:soundItem.IsChecked=$true;Click-Item $script:soundItem
+  Assert-Ui ($script:prefs.soundOn-and !(Get-WidgetAudioEnabled)) 'sound toggle saved but UI tests remain silent'
+  Click-Item $script:soundVolumeMenu.Items[3]
+  Assert-Ui ($script:prefs.soundVolume-eq .5) 'sound volume menu connected'
+  Click-Item $script:musicVolumeMenu.Items[1]
+  Assert-Ui ($script:prefs.musicVolume-eq .25-and $script:prefs.soundVolume-eq .5) 'music and click volume independent'
+  Set-GeminiSound $false;Sync-GeminiMenu
+  $script:menu.PlacementTarget=$script:ui.MenuButton;$script:menu.IsOpen=$true;$script:menu.UpdateLayout()
+  foreach($pair in @(@($script:soundMenu,'sound-menu.png'),@($script:musicMenu,'music-menu.png'))){
+    $pair[0].IsSubmenuOpen=$true;$pair[0].UpdateLayout();$popup=$pair[0].Template.FindName('PART_Popup',$pair[0])
+    Assert-Ui ($popup.IsOpen-and $popup.Child.ActualWidth-ge 280) 'local media submenu opens with themed controls'
+    if($CaptureDir){Render-Ui $popup.Child (Join-Path $CaptureDir $pair[1])}
+    $pair[0].IsSubmenuOpen=$false
+  }
+  $script:menu.IsOpen=$false
   Write-Json (Join-Path $StateDir 'ui-validation.json') @{ok=$true;checks=$script:checks.ToArray();quotaSource='synthetic UI fixture, not account quota'}
   "UI checks passed: $($script:checks.Count)"
 } finally {Close-GeminiMedia;$script:menu.IsOpen=$false;$script:window.Close()}
