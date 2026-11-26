@@ -25,13 +25,14 @@ function Write-Json($file,$value){
   [IO.File]::WriteAllText($temp,($value|ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
   if(Test-Path -LiteralPath $file){[IO.File]::Replace($temp,$file,($file+'.bak'))}else{[IO.File]::Move($temp,$file)}
 }
-$script:prefs=@{view='bust';action='idle';size=240;followHost=$true;paused=$false;right=16;bottom=16;group=0;completion=$true;collapsed=$false;autoQuoteEnabled=$false;autoQuoteIntervalSeconds=300}
+$script:prefs=@{view='bust';action='idle';size=240;followHost=$true;paused=$false;right=16;bottom=16;group=0;completion=$true;collapsed=$false;autoQuoteEnabled=$false;autoQuoteIntervalSeconds=300;soundOn=$false;soundVolume=.35;musicVolume=.35}
 $saved=Read-Json (Join-Path $script:stateDir 'preferences.json')
 if($saved){
   if($saved.view-in $script:views){$script:prefs.view=$saved.view}
   if($saved.action-in $script:actions){$script:prefs.action=$saved.action}
   if($saved.size-in @(180,240,300)){$script:prefs.size=[int]$saved.size}
-  foreach($key in @('completion','collapsed','paused','autoQuoteEnabled')){if($saved.$key-is [bool]){$script:prefs[$key]=$saved.$key}}
+  foreach($key in @('completion','collapsed','paused','autoQuoteEnabled','soundOn')){if($saved.$key-is [bool]){$script:prefs[$key]=$saved.$key}}
+  foreach($key in @('soundVolume','musicVolume')){try{$v=[double]$saved.$key;if($null-ne $saved.$key-and ![double]::IsNaN($v)-and ![double]::IsInfinity($v)-and $v-ge 0-and $v-le 1){$script:prefs[$key]=$v}}catch{}}
   if($saved.autoQuoteIntervalSeconds-in @(60,300,900)){$script:prefs.autoQuoteIntervalSeconds=[int]$saved.autoQuoteIntervalSeconds}
   foreach($key in @('desktopLeft','desktopTop')){if(($saved.$key-is [int] -or $saved.$key-is [long])-and [Math]::Abs([double]$saved.$key)-le 100000){$script:prefs[$key]=[int]$saved.$key}}
   if($saved.group-is [int] -or $saved.group-is [long]){$script:prefs.group=[Math]::Max(0,[int]$saved.group)}
@@ -64,9 +65,10 @@ function Start-Refresh {
 }
 $script:ui.Refresh.Add_Click({Start-Refresh})
 $script:avatar.Add_MouseLeftButtonDown({
+  Play-WidgetPressSound
   $before=[GeminiNiangNative]::Frame($script:owner.Handle.ToInt64())
   $script:dragging=$true
-  try{$script:window.DragMove()}finally{$script:dragging=$false}
+  try{$script:window.DragMove()}finally{$script:dragging=$false;Play-WidgetReleaseSound}
   $after=[GeminiNiangNative]::Frame($script:owner.Handle.ToInt64())
   $hostFrame=if($script:prefs.followHost-and $script:hostHandle){[GeminiNiangNative]::Frame($script:hostHandle)}else{$null}
   if(!(Save-GeminiPosition $before $after $hostFrame)){
@@ -123,6 +125,11 @@ $script:timer.Add_Tick({
       'think'{$angle=1.3*[Math]::Sin($phase)}
       'sleep'{$sy=1+.008*[Math]::Sin($phase);$angle=.45*[Math]::Sin($phase)}
     }
+    Update-GeminiMusic
+    if($script:music.mode-eq 'playing'-and !$script:prefs.paused-and !$script:dragging-and [DateTime]::UtcNow-ge $script:noticeUntil){
+      $musicMotion=Get-GeminiMusicMotion (Get-GeminiMusicLevel $script:music.player.Position.TotalSeconds)
+      $y+=$musicMotion.y;$sy*=$musicMotion.scale;$angle+=$musicMotion.angle
+    }
     $script:avatar.Source=$script:images[($script:prefs.view+'-'+$pose)]
     $script:scale.ScaleX=1;$script:scale.ScaleY=$sy;$script:rotate.Angle=$angle;$script:translate.Y=$y*$script:prefs.size/512
     if(($script:ticks%5)-eq 0){Update-Host;Update-Events;Update-GeminiScenes;Update-Status}
@@ -132,7 +139,7 @@ $script:timer.Add_Tick({
     $script:ticks++
   }catch{[IO.File]::WriteAllText((Join-Path $script:stateDir 'widget-error.txt'),$_.Exception.ToString())}
 })
-$script:window.Add_Closed({$script:timer.Stop();if($script:quoteEditor){$script:quoteEditor.Close()}})
+$script:window.Add_Closed({$script:timer.Stop();Close-GeminiMedia;if($script:quoteEditor){$script:quoteEditor.Close()}})
 try{
   $script:timer.Start();$script:window.Show();Update-Host;Start-Refresh
   $app=[Windows.Application]::new();$app.ShutdownMode='OnExplicitShutdown'

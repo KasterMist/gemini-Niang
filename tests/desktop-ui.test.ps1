@@ -100,4 +100,4 @@ try {
   Assert-Ui ($script:bubble.Visibility-eq 'Hidden') 'completion expiry restores prior collapse in WPF'
   Write-Json (Join-Path $StateDir 'ui-validation.json') @{ok=$true;checks=$script:checks.ToArray();quotaSource='synthetic UI fixture, not account quota'}
   "UI checks passed: $($script:checks.Count)"
-} finally {$script:menu.IsOpen=$false;$script:window.Close()}
+} finally {Close-GeminiMedia;$script:menu.IsOpen=$false;$script:window.Close()}

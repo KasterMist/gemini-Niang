@@ -4,6 +4,7 @@
 . (Join-Path $PSScriptRoot 'scenes.ps1')
 . (Join-Path $PSScriptRoot 'quote-editor.ps1')
 . (Join-Path $PSScriptRoot 'placement.ps1')
+. (Join-Path $PSScriptRoot 'media.ps1')
 function Save-Preferences {Write-Json (Join-Path $script:stateDir 'preferences.json') $script:prefs}
 function Set-GeminiBubble([bool]$visible,[switch]$Transient) {
   foreach($name in @('Bubble','Tail','TailNear')){$script:ui[$name].Visibility=if($visible){'Visible'}else{'Hidden'}}
@@ -40,6 +41,8 @@ function Initialize-GeminiUi {
   $script:bubbleMode='quota';$script:currentQuote='我在这儿，慢慢来就好。'
   $script:autoQuoteUntil=0;$script:noticeRestorePending=$false
   Initialize-WidgetAutoQuoteSettings $script:prefs
+  if(!$script:prefs.ContainsKey('musicVolume')){$script:prefs.musicVolume=.35}
+  Initialize-GeminiMedia
   $script:avatar.ToolTip='单击查看额度；拖动移动；右键打开设置'
   $script:avatar.RenderTransformOrigin=[Windows.Point]::new(.5,.9)
   $script:transforms=[Windows.Media.TransformGroup]::new();$script:scale=[Windows.Media.ScaleTransform]::new();$script:rotate=[Windows.Media.RotateTransform]::new();$script:translate=[Windows.Media.TranslateTransform]::new()
@@ -68,6 +71,21 @@ function Initialize-GeminiUi {
   foreach($size in @(180,240,300)){$label=switch($size){180{'小 · 75%'}240{'标准 · 100%'}300{'大 · 125%'}};$item=Add-GeminiItem $appearance $label {$script:prefs.size=[int]$this.Uid;Set-GeminiSize;Save-Preferences};$item.Uid=[string]$size;$item.IsCheckable=$true}
   $script:sizeMenu=$appearance
   $script:pauseItem=Add-GeminiItem $appearance '暂停动画' {$script:prefs.paused=$this.IsChecked;Save-Preferences};$script:pauseItem.IsCheckable=$true
+  $script:soundMenu=Add-GeminiItem $script:menu '声音与点击' $null
+  $script:soundItem=Add-GeminiItem $script:soundMenu '点击音效（默认关闭）' {Set-GeminiSound $this.IsChecked};$script:soundItem.IsCheckable=$true
+  $script:soundVolumeMenu=Add-GeminiItem $script:soundMenu '音效音量' $null
+  foreach($v in @(0,25,50,75,100)){$item=Add-GeminiItem $script:soundVolumeMenu ($v.ToString()+'%') {Set-GeminiSoundVolume ([double]$this.Uid/100)};$item.Uid=[string]$v;$item.IsCheckable=$true}
+  $null=Add-GeminiItem $script:soundMenu '试听内置 / 当前按下音效' {Invoke-GeminiMediaAction 'preview'}
+  foreach($slot in @('press','release')){$label=if($slot-eq 'press'){'选择按下音效（WAV ≤5秒）'}else{'选择松开音效（WAV ≤5秒）'};$item=Add-GeminiItem $script:soundMenu $label {Invoke-WidgetAudioAction 'import' $this.Uid};$item.Uid=$slot}
+  $null=Add-GeminiItem $script:soundMenu '恢复内置音效' {Invoke-WidgetAudioAction 'builtin' ''}
+  $script:musicMenu=Add-GeminiItem $script:menu '音乐律动（本地 WAV）' $null
+  $script:musicMenu.ToolTip='只分析所选文件的音量能量，不录制麦克风或系统声音。'
+  $script:musicStatus=Add-GeminiItem $script:musicMenu '未播放' $null;$script:musicStatus.IsEnabled=$false
+  $null=Add-GeminiItem $script:musicMenu '选择并播放本地 WAV…' {Invoke-GeminiMediaAction 'music'}
+  $script:musicPause=Add-GeminiItem $script:musicMenu '暂停 / 继续' {Toggle-GeminiMusic}
+  $null=Add-GeminiItem $script:musicMenu '停止播放与律动' {Stop-GeminiMusic}
+  $script:musicVolumeMenu=Add-GeminiItem $script:musicMenu '音乐音量' $null
+  foreach($v in @(0,25,50,75,100)){$item=Add-GeminiItem $script:musicVolumeMenu ($v.ToString()+'%') {Set-GeminiMusicVolume ([double]$this.Uid/100)};$item.Uid=[string]$v;$item.IsCheckable=$true}
   $script:groupMenu=Add-GeminiItem $script:menu '额度模型组' $null
   $script:quoteEditorItem=Add-GeminiItem $script:menu '编辑我的语录' {Open-GeminiQuoteEditor}
   $script:autoQuoteMenu=Add-GeminiItem $script:menu '自动语录' $null
@@ -91,6 +109,11 @@ function Sync-GeminiMenu {
   $script:actionMenu.Items[1].Header=if($script:prefs.view-eq 'back'){'耳朵轻动'}else{'眨眼'}
   foreach($item in $script:sizeMenu.Items){if($item.Uid){$item.IsChecked=[int]$item.Uid-eq $script:prefs.size}}
   $script:pauseItem.IsChecked=$script:prefs.paused;$script:followItem.IsChecked=$script:prefs.followHost;$script:completionItem.IsChecked=$script:prefs.completion
+  $script:soundItem.IsChecked=$script:soundOn
+  foreach($item in $script:soundVolumeMenu.Items){$item.IsChecked=[Math]::Abs([double]$item.Uid/100-$script:soundVolume)-lt .001}
+  foreach($item in $script:musicVolumeMenu.Items){$item.IsChecked=[Math]::Abs([double]$item.Uid/100-$script:prefs.musicVolume)-lt .001}
+  $script:musicStatus.Header=switch($script:music.mode){'loading'{'正在分析本地 WAV…'}'opening'{'正在打开播放器…'}'playing'{'播放中 · 文件能量律动'}'paused'{'已暂停'}'paused-hidden'{'宿主隐藏，已暂停；请手动继续'}'ended'{'播放结束'}'error'{$script:music.lastError}default{'未播放 · 不监听系统音频'}}
+  $script:musicPause.IsEnabled=$script:music.mode-in @('playing','paused','paused-hidden','ended')
   $script:autoQuoteItem.IsChecked=$script:autoQuoteEnabled
   foreach($item in $script:autoQuoteMenu.Items){if($item.Uid){$item.IsChecked=[int]$item.Uid-eq $script:autoQuoteIntervalSeconds}}
   $script:groupMenu.Items.Clear();$usage=Read-Json (Join-Path $script:stateDir 'usage.json')
