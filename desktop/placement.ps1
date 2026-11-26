@@ -12,6 +12,7 @@ function Save-GeminiPosition($Before,$After,$HostFrame) {
   Save-Preferences;return $true
 }
 function Set-GeminiFollowHost([bool]$Follow) {
+  Stop-GeminiSystemRhythm
   if($script:owner-and $script:owner.Handle-ne [IntPtr]::Zero){$frame=[GeminiNiangNative]::Frame($script:owner.Handle.ToInt64());$script:prefs.desktopLeft=$frame.left;$script:prefs.desktopTop=$frame.top}
   $script:prefs.followHost=$Follow;$script:desktopRestored=$true;Save-Preferences
 }

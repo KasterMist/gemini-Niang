@@ -69,6 +69,27 @@ try {
   if($CaptureDir){Render-Ui $popup.Child (Join-Path $CaptureDir 'shapes.png')}
   $script:shapeMenu.IsSubmenuOpen=$false
   $script:menu.IsOpen=$false
+  . (Join-Path $script:root 'desktop/native.ps1')
+  $script:owner=[Windows.Interop.WindowInteropHelper]::new($script:window);$script:hostHandle=0;$script:prefs.paused=$false
+  $originalTransform=$script:avatar.RenderTransform
+  $TestMode=$false;$rejected=$false
+  try{Set-GeminiSystemRhythm $true -Synthetic}catch{$rejected=$true}finally{$TestMode=$true}
+  Assert-Ui $rejected 'synthetic audio forbidden outside test mode'
+  Set-GeminiSystemRhythm $true -Synthetic
+  Assert-Ui (Test-GeminiSystemRhythm) 'ported physics visual starts with synthetic input'
+  $capture=$script:systemRhythm.GetType().GetField('capture',[Reflection.BindingFlags]'NonPublic,Instance').GetValue($script:systemRhythm)
+  Assert-Ui ($null-eq $capture) 'synthetic visual creates no system audio capture worker'
+  Assert-Ui ($script:systemRhythm.SyntheticAudio.Source-eq 'synthetic-test') 'synthetic source explicitly labeled'
+  Set-GeminiAutoQuotes $true 60;Reset-WidgetAutoQuoteSchedule 1000
+  for($now=1000;$now-le 62000;$now+=500){Update-GeminiScenes $now}
+  Assert-Ui ($script:bubble.Visibility-eq 'Hidden') 'automatic quotes do not interrupt system rhythm'
+  Set-GeminiAutoQuotes $false 300
+  Stop-GeminiSystemRhythm
+  Assert-Ui ([object]::ReferenceEquals($originalTransform,$script:avatar.RenderTransform)) 'stop restores original character transform'
+  Assert-Ui (!(Test-GeminiSystemRhythm)) 'system mode is not persisted or auto restarted'
+  Set-GeminiSystemRhythm $true -Synthetic;$script:window.Hide();Update-GeminiSystemRhythm
+  Assert-Ui (!(Test-GeminiSystemRhythm)) 'hiding widget disposes the system rhythm controller'
+  $script:window.Show()
   Click-Item $script:quoteEditorItem
   Assert-Ui $script:quoteEditor.IsVisible 'quote editor opens from real menu event'
   $script:quoteEditor.FindName('Lines').Text='0 | 无效权重'

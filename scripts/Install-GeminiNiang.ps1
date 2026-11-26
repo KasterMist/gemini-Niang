@@ -43,7 +43,7 @@ if(Test-Path -LiteralPath $file){
   foreach($property in $original.PSObject.Properties){$config[$property.Name]=$property.Value}
   $backup=$file+'.'+[DateTime]::UtcNow.ToString('yyyyMMddHHmmssfff')+'.bak';Copy-Item -LiteralPath $file -Destination $backup
 }
-$config.agyPath=$AgyPath;$config.nodePath=$node.Source;$config.version='0.3.3'
+$config.agyPath=$AgyPath;$config.nodePath=$node.Source;$config.version='0.4.0'
 try{
   $temp=$file+'.'+[Guid]::NewGuid().ToString('N')+'.tmp'
   [IO.File]::WriteAllText($temp,($config|ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
@@ -87,6 +87,12 @@ Write-Output ('Gemini Niang configured. CLI='+$version+'; state='+$StateDir+'; p
 if($backup){Write-Output ('Previous config backup='+$backup)}
 Write-Output 'No autostart, scheduled task, PATH or Codex configuration was changed.'
 if($StartWidget){
-  $args='-NoProfile -STA -ExecutionPolicy Bypass -WindowStyle Hidden -File "'+(Join-Path $root 'desktop\GeminiNiang.ps1')+'" -StateDir "'+$StateDir+'"'
-  Start-Process powershell.exe -ArgumentList $args -WindowStyle Hidden
+  $runtimeFile=Join-Path $StateDir 'widget-runtime.json';$oldRuntime=$null
+  if(Test-Path -LiteralPath $runtimeFile){try{$oldRuntime=Get-Content -LiteralPath $runtimeFile -Raw -Encoding UTF8|ConvertFrom-Json}catch{}}
+  & (Join-Path $PSScriptRoot 'Stop-GeminiNiang.ps1') -StateDir $StateDir
+  if($oldRuntime-and $oldRuntime.pid-ne $PID-and ([DateTime]::UtcNow-([DateTime]$oldRuntime.at).ToUniversalTime()).TotalSeconds-lt 15){
+    $oldProcess=$null;try{$oldProcess=[Diagnostics.Process]::GetProcessById([int]$oldRuntime.pid)}catch{}
+    if($oldProcess){try{if($oldProcess.ProcessName-match '^(powershell|GeminiNiang-[a-f0-9]+)$'-and !$oldProcess.WaitForExit(10000)){throw 'Existing Gemini widget did not stop; close it before retrying.'}}finally{$oldProcess.Dispose()}}
+  }
+  & (Join-Path $PSScriptRoot 'Start-GeminiNiang.ps1') -StateDir $StateDir
 }

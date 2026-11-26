@@ -1,10 +1,11 @@
 ﻿param(
-  [switch]$CheckOnly,[switch]$NoRefresh,[switch]$TestMode,[switch]$ShowInTaskbar,
+  [switch]$CheckOnly,[switch]$NoRefresh,[switch]$TestMode,[switch]$ShowInTaskbar,[switch]$SyntheticRhythmTest,
   [string]$StateDir=(Join-Path $env:LOCALAPPDATA 'GeminiNiang\state'),
   [string]$HostExecutablePath=(Join-Path $env:LOCALAPPDATA 'Programs\antigravity\Antigravity.exe'),
   [ValidateRange(0,3600)][int]$AutoCloseSeconds=0
 )
 $ErrorActionPreference='Stop'
+if($SyntheticRhythmTest-and !$TestMode){throw 'Synthetic rhythm startup is test-mode only.'}
 $script:root=Split-Path $PSScriptRoot -Parent
 $script:appVersion=([IO.File]::ReadAllText((Join-Path $script:root 'package.json'))|ConvertFrom-Json).version
 $script:stateDir=[IO.Path]::GetFullPath($StateDir)
@@ -13,7 +14,7 @@ $script:actions=@('idle','blink','wave','happy','think','sleep')
 $script:views=@('bust','full','side','back')
 . (Join-Path $PSScriptRoot 'native.ps1')
 foreach($view in $script:views){foreach($action in $script:actions){if(!(Test-Path (Join-Path $script:assetDir "$view-$action.png"))){throw "Missing asset: $view-$action"}}}
-foreach($file in @('ui.ps1','widget.xaml','menu-resources.xaml','media.ps1','audio.ps1','audio-import.mjs','music-import.mjs','assets/press.wav','assets/release.wav')){if(!(Test-Path -LiteralPath (Join-Path $PSScriptRoot $file) -PathType Leaf)){throw "Missing desktop file: $file"}}
+foreach($file in @('ui.ps1','widget.xaml','menu-resources.xaml','media.ps1','audio.ps1','audio-import.mjs','music-import.mjs','system-rhythm.ps1','music-audio.cs','music-visual.cs','music-anchor.cs','Host.cs','Host.manifest','assets/press.wav','assets/release.wav')){if(!(Test-Path -LiteralPath (Join-Path $PSScriptRoot $file) -PathType Leaf)){throw "Missing desktop file: $file"}}
 if($CheckOnly){
   [pscustomobject]@{ok=$true;assets=24;stateDir=$script:stateDir;hostExecutableExists=(Test-Path -LiteralPath $HostExecutablePath);host=[GeminiNiangNative]::FindHost($HostExecutablePath,0)}|ConvertTo-Json -Depth 4
   return
@@ -40,7 +41,9 @@ if($saved){
   if($saved.followHost-is [bool]){$script:prefs.followHost=$saved.followHost}
   foreach($key in @('right','bottom')){if($null-ne $saved.$key){$script:prefs[$key]=[Math]::Max(0,[Math]::Min(2000,[int]$saved.$key))}}
 }
-$mutexId='Local\GeminiNiang-'+([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($script:stateDir)).Replace('/','_'))
+$mutexHash=[Security.Cryptography.SHA256]::Create()
+try{$mutexKey=([BitConverter]::ToString($mutexHash.ComputeHash([Text.Encoding]::UTF8.GetBytes($script:stateDir.TrimEnd('\').ToUpperInvariant())))).Replace('-','')}finally{$mutexHash.Dispose()}
+$mutexId='Local\GeminiNiang-'+$mutexKey
 $script:mutex=[Threading.Mutex]::new($false,$mutexId)
 try{$owned=$script:mutex.WaitOne(0)}catch [Threading.AbandonedMutexException]{$owned=$true}
 if(!$owned){$script:mutex.Dispose();return}
@@ -80,6 +83,7 @@ $script:avatar.Add_MouseLeftButtonDown({param($sender,$event)
 $script:avatar.Add_MouseLeftButtonUp({param($sender,$event)if((Test-GeminiSystemRhythm)-and $script:systemRhythm.Motion.Held){$script:systemRhythm.EndHold();$script:avatar.ReleaseMouseCapture();Play-WidgetReleaseSound;$event.Handled=$true}})
 $script:avatar.Add_LostMouseCapture({if((Test-GeminiSystemRhythm)-and $script:systemRhythm.Motion.Held){$script:systemRhythm.EndHold()}})
 $script:window.Add_DpiChanged({$script:desktopRestored=$false})
+$script:window.Add_KeyDown({param($sender,$event)if($event.Key-eq [Windows.Input.Key]::Escape-and (Test-GeminiSystemRhythm)){Stop-GeminiSystemRhythm;$event.Handled=$true}})
 function Update-Host {
   if($script:dragging){return}
   $hostWindow=if($script:prefs.followHost){[GeminiNiangNative]::FindHost($HostExecutablePath,$script:hostHandle)}else{$null}
@@ -139,7 +143,7 @@ $script:timer.Add_Tick({
     $script:avatar.Source=$script:images[($script:prefs.view+'-'+$pose)]
     $script:scale.ScaleX=1;$script:scale.ScaleY=$sy;$script:rotate.Angle=$angle;$script:translate.Y=$y*$script:prefs.size/512
     if(($script:ticks%5)-eq 0){Update-Host;Update-Events;Update-GeminiScenes;Update-Status}
-    if(($script:ticks%20)-eq 0){Write-Json (Join-Path $script:stateDir 'widget-runtime.json') @{version=$script:appVersion;pid=$PID;handle=$script:owner.Handle.ToInt64();host=$script:hostHandle;view=$script:prefs.view;action=$action;paused=$script:prefs.paused;autoQuoteEnabled=$script:autoQuoteEnabled;soundOn=$script:soundOn;audioReady=[bool]$script:geminiNiangAudio;musicMode=$script:music.mode;systemRhythmActive=(Test-GeminiSystemRhythm);rhythmSynthetic=[bool]$script:rhythmSynthetic;testMode=[bool]$TestMode;nativeVisible=[GeminiNiangNative]::IsWindowVisible($script:owner.Handle);noticeActive=([DateTime]::UtcNow-lt $script:noticeUntil);bubbleVisible=($script:bubble.Visibility-eq 'Visible');at=[DateTime]::UtcNow.ToString('o')}}
+    if(($script:ticks%20)-eq 0){Write-Json (Join-Path $script:stateDir 'widget-runtime.json') @{version=$script:appVersion;pid=$PID;handle=$script:owner.Handle.ToInt64();dpi=[GeminiNiangNative]::Dpi($script:owner.Handle.ToInt64());perMonitorV2=[GeminiNiangNative]::PerMonitorV2($script:owner.Handle.ToInt64());position=[GeminiNiangNative]::Frame($script:owner.Handle.ToInt64());host=$script:hostHandle;view=$script:prefs.view;action=$action;paused=$script:prefs.paused;autoQuoteEnabled=$script:autoQuoteEnabled;soundOn=$script:soundOn;audioReady=[bool]$script:geminiNiangAudio;musicMode=$script:music.mode;systemRhythmActive=(Test-GeminiSystemRhythm);rhythmSynthetic=[bool]$script:rhythmSynthetic;systemRenderPerMonitorV2=if(Test-GeminiSystemRhythm){$script:systemRhythm.RenderPerMonitorV2}else{$false};rhythmDiagnostics=if($TestMode-and (Test-GeminiSystemRhythm)){Get-GeminiRhythmDiagnostics}else{$null};testMode=[bool]$TestMode;nativeVisible=[GeminiNiangNative]::IsWindowVisible($script:owner.Handle);noticeActive=([DateTime]::UtcNow-lt $script:noticeUntil);bubbleVisible=($script:bubble.Visibility-eq 'Visible');at=[DateTime]::UtcNow.ToString('o')}}
     if(([DateTime]::UtcNow-$script:lastRefresh).TotalSeconds-ge 120){Start-Refresh}
     if($AutoCloseSeconds-gt 0-and ([DateTime]::UtcNow-$script:started).TotalSeconds-ge $AutoCloseSeconds){$script:window.Close()}
     $script:ticks++
@@ -148,6 +152,7 @@ $script:timer.Add_Tick({
 $script:window.Add_Closed({$script:timer.Stop();Close-GeminiMedia;if($script:quoteEditor){$script:quoteEditor.Close()}})
 try{
   $script:timer.Start();$script:window.Show();Update-Host;Start-Refresh
+  if($SyntheticRhythmTest){Set-GeminiSystemRhythm $true -Synthetic}
   $app=[Windows.Application]::new();$app.ShutdownMode='OnExplicitShutdown'
   $script:window.Add_Closed({$app.Shutdown()})
   $null=$app.Run()

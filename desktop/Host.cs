@@ -8,12 +8,13 @@ using System.Windows.Forms;
 public static class GeminiDesktopHost {
     [STAThread] public static int Main(string[] args) {
         try {
-            string root=null,state=null;bool test=false,noRefresh=false,taskbar=false;int close=0;
+            string root=null,state=null;bool test=false,noRefresh=false,taskbar=false,synthetic=false;int close=0;
             for(int i=0;i<args.Length;i++) {
                 switch(args[i]) {
                     case "--root":root=Path.GetFullPath(args[++i]);break;
                     case "--state-dir":state=Path.GetFullPath(args[++i]);break;
                     case "--test":test=true;break;
+                    case "--synthetic-rhythm":synthetic=true;break;
                     case "--no-refresh":noRefresh=true;break;
                     case "--show-taskbar":taskbar=true;break;
                     case "--auto-close":close=int.Parse(args[++i]);if(close<0||close>3600)throw new ArgumentException("Invalid timeout");break;
@@ -33,6 +34,7 @@ public static class GeminiDesktopHost {
                     if(state!=null)ps.AddParameter("StateDir",state);
                     if(test)ps.AddParameter("TestMode");if(noRefresh)ps.AddParameter("NoRefresh");if(taskbar)ps.AddParameter("ShowInTaskbar");
                     if(close>0)ps.AddParameter("AutoCloseSeconds",close);
+                    if(synthetic)ps.AddParameter("SyntheticRhythmTest");
                     ps.Invoke();
                     if(ps.InvocationStateInfo.State==PSInvocationState.Failed)throw new InvalidOperationException("Companion pipeline failed",ps.InvocationStateInfo.Reason);
                 }

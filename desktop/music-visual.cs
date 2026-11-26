@@ -164,6 +164,8 @@ public sealed class GeminiMusicVisual : IDisposable {
     public string Error {get;private set;}
     public GeminiMusicMotion Motion {get;private set;}
     public GeminiMusicAudioSnapshot Audio {get;private set;}
+    public bool RenderPerMonitorV2 {get;private set;}
+    public bool CapturesSystemAudio {get{return capture!=null;}}
     public GeminiMusicAudioSnapshot SyntheticAudio=new GeminiMusicAudioSnapshot{Source="synthetic-test"};
     public IntPtr LampHandle {get{return lampSource==null?IntPtr.Zero:lampSource.Handle;}}
     public void BeginHold(double cursorX,double cursorY){
@@ -197,16 +199,20 @@ public sealed class GeminiMusicVisual : IDisposable {
         var first=AlphaBounds((BitmapSource)girl.Source,girl.Width,girl.Height);initialFoot=girl.PointToScreen(new Point(first.Left+first.Width/2,first.Bottom));
         under=new MusicArt(this,false);over=new MusicArt(this,true);
         root.Children.Insert(root.Children.IndexOf(girl),under);root.Children.Insert(root.Children.IndexOf(girl)+1,over);
-        capture=captureSystem?new GeminiMusicCapture(false):null;Enabled=true;ColorEnabled=false;
+        Enabled=true;ColorEnabled=false;
+        try {
         RefreshLayout();lastFrame=GeminiMusicCapture.NowMs;
         girl.PreviewMouseMove+=Drag;CompositionTarget.Rendering+=Frame;
         // Transparent/occluded WPF windows may stop requesting render frames.
         // Wake only when that happens; normal motion still follows Rendering.
         wake=new DispatcherTimer(DispatcherPriority.Background,window.Dispatcher);
         wake.Interval=TimeSpan.FromMilliseconds(16);wake.Tick+=Wake;wake.Start();
+        // Start capture last: a layout/visual failure must never leave a listener behind.
+        capture=captureSystem?new GeminiMusicCapture(false):null;
+        } catch {Stop(false);throw;}
     }
     void Wake(object sender,EventArgs e){if(Enabled&&!disposed&&visible&&window.IsVisible&&GeminiMusicCapture.NowMs-lastFrame>=32)Frame(sender,e);}
-    public void RefreshLayout() {
+    public void RefreshLayout() { using(var dpiScope=new GeminiMusicDpiScope()) {
         var source=(BitmapSource)girl.Source;alpha=AlphaBounds(source,girl.Width,girl.Height);
         double left=175-(alpha.Left+alpha.Width/2),top=350-alpha.Bottom;
         Canvas.SetLeft(girl,left);Canvas.SetTop(girl,top);girl.RenderTransformOrigin=new Point(0,0);
@@ -214,7 +220,7 @@ public sealed class GeminiMusicVisual : IDisposable {
         press.CenterX=alpha.Left+alpha.Width/2;press.CenterY=alpha.Bottom;girl.RenderTransform=press;
         imageRect=new Rect(left,top,girl.Width,girl.Height);
         window.UpdateLayout();MeasureAnchor();under.InvalidateVisual();over.InvalidateVisual();
-    }
+    }}
     // Called immediately after the ordinary layout recalculates size or DPI.
     public void CaptureBaseLayout() {baseLeft=Canvas.GetLeft(girl);baseTop=Canvas.GetTop(girl);if(menuButton!=null){menuLeft=Canvas.GetLeft(menuButton);menuTop=Canvas.GetTop(menuButton);}RefreshLayout();}
     void MeasureAnchor() {
@@ -223,7 +229,7 @@ public sealed class GeminiMusicVisual : IDisposable {
         var l=girl.PointToScreen(new Point(alpha.Left,alpha.Bottom));var r=girl.PointToScreen(new Point(alpha.Right,alpha.Bottom));figurePhysical=Math.Abs(r.X-l.X);
     }
     public void Configure(IntPtr widget,IntPtr host,bool follow,bool visible,bool blocked,bool topmost,
-                          double normalX,double normalY,double frameLeft,double frameBottom,double dpi) {
+                          double normalX,double normalY,double frameLeft,double frameBottom,double dpi) { using(var dpiScope=new GeminiMusicDpiScope()) {
         this.widget=widget;this.host=host;this.follow=follow;this.visible=visible;this.blocked=blocked;this.topmost=topmost;
         this.normalX=normalX;this.normalY=normalY;relativeX=normalX-frameLeft;bottomDistance=frameBottom-normalY;this.dpi=dpi;
         MeasureAnchor();var frame=FrameBounds();allowed=frame.Width>=64*dpi&&frame.Height>=64*dpi;
@@ -236,7 +242,7 @@ public sealed class GeminiMusicVisual : IDisposable {
         }else if(Motion!=null&&allowed&&(Math.Abs(Motion.Width-frame.Width)>.5||Math.Abs(Motion.Floor-frame.Height)>.5||Math.Abs(Motion.FigureWidth-figurePhysical)>.5))
             Motion.Resize(frame.Width,frame.Height,figurePhysical,dpi);
         PositionLamp(frame,visible&&allowed&&window.IsVisible,true);
-    }
+    }}
     Rect FrameBounds() {
         if(follow){
             var bounds=HostFrame==null?null:HostFrame();
@@ -252,7 +258,7 @@ public sealed class GeminiMusicVisual : IDisposable {
         bool flying=Motion!=null&&!held&&Motion.Phase<2;
         return blocked||(window.ContextMenu!=null&&window.ContextMenu.IsOpen)||(!held&&!flying&&(girl.IsMouseCaptured||(bubble!=null&&bubble.Visibility==Visibility.Visible)));
     }
-    void ApplyPosition() {
+    void ApplyPosition() { using(var dpiScope=new GeminiMusicDpiScope()) {
         if(disposed||!Enabled||Paused||Motion==null||!visible||!allowed||!window.IsVisible||InteractionBlocked())return;
         // Resolve the latest host frame and motion at delivery, so a host move,
         // resize or drag cannot leave a queued absolute position behind.
@@ -264,6 +270,7 @@ public sealed class GeminiMusicVisual : IDisposable {
             MusicNative.Rect current;
             if(!MusicNative.GetWindowRect(widget,out current)||current.Left!=px||current.Top!=py)MusicNative.SetWindowPos(widget,IntPtr.Zero,px,py,0,0,0x615);
         }
+    }
     }
     void CancelPendingPosition() {
         if(pendingPosition!=null){if(pendingPosition.Status==DispatcherOperationStatus.Pending)pendingPosition.Abort();pendingPosition=null;}
@@ -278,6 +285,7 @@ public sealed class GeminiMusicVisual : IDisposable {
     void Frame(object sender,EventArgs e) {
         if(!Enabled||disposed)return;
         try {
+            using(var dpiScope=new GeminiMusicDpiScope()) { RenderPerMonitorV2=GeminiMusicDpiScope.IsPerMonitorV2;
             double now=GeminiMusicCapture.NowMs,elapsed=Math.Max(0,(now-lastFrame)/1000),dt=Math.Min(.12,elapsed);lastFrame=now;Audio=capture==null?SyntheticAudio:capture.Snapshot();
             bool held=Motion!=null&&Motion.Held;
             bool interaction=InteractionBlocked();
@@ -299,6 +307,7 @@ public sealed class GeminiMusicVisual : IDisposable {
             }
             if(changed){under.InvalidateVisual();over.InvalidateVisual();}
             PositionLamp(frame,visible&&allowed&&window.IsVisible,changed);wasPaused=Paused;
+            }
         } catch(Exception ex) {Error=ex.ToString();Stop(false);}
     }
     void PositionLamp(Rect frame,bool show,bool redraw) {
@@ -327,8 +336,8 @@ public sealed class GeminiMusicVisual : IDisposable {
     IntPtr LampHook(IntPtr h,int msg,IntPtr w,IntPtr l,ref bool handled) {
         if(msg==0x84){handled=true;return new IntPtr(-1);}if(msg==0x21){handled=true;return new IntPtr(3);}return IntPtr.Zero;
     }
-    public void Stop(bool keepPosition) {
-        if(disposed)return;disposed=true;Enabled=false;girl.PreviewMouseMove-=Drag;CompositionTarget.Rendering-=Frame;CancelPendingPosition();wake.Stop();wake.Tick-=Wake;if(capture!=null)capture.Dispose();
+    public void Stop(bool keepPosition) { using(var dpiScope=new GeminiMusicDpiScope()) {
+        if(disposed)return;disposed=true;Enabled=false;girl.PreviewMouseMove-=Drag;CompositionTarget.Rendering-=Frame;CancelPendingPosition();if(wake!=null){wake.Stop();wake.Tick-=Wake;}if(capture!=null)capture.Dispose();
         // A window that is already closing can reject PointToScreen. Layout and
         // native resources must still be released in that case.
         Point foot=new Point();bool haveFoot=false;
@@ -345,6 +354,7 @@ public sealed class GeminiMusicVisual : IDisposable {
                 if(MusicNative.GetWindowRect(widget,out r))MusicNative.SetWindowPos(widget,IntPtr.Zero,(int)Math.Round(r.Left+foot.X-after.X),(int)Math.Round(r.Top+foot.Y-after.Y),0,0,0x215);
             }catch{}
         } else if(!follow)MusicNative.SetWindowPos(widget,IntPtr.Zero,(int)Math.Round(normalX),(int)Math.Round(normalY),0,0,0x215);
+    }
     }
     public void Dispose(){Stop(false);}
     public static Rect AlphaBounds(BitmapSource image,double width,double height) {

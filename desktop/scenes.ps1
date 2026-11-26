@@ -40,7 +40,7 @@ function Update-GeminiScenes([long]$Now=[DateTimeOffset]::UtcNow.ToUnixTimeMilli
   }
   $editing=$script:quoteEditor-and $script:quoteEditor.IsVisible
   # Never interrupt quota reading, a menu, a drag or a completion notification.
-  $busy=$noticeActive-or $script:dragging-or $script:menu.IsOpen-or $editing-or $script:audioDialogOpen-or ($script:music-and $script:music.mode-in @('loading','opening','playing'))-or ($script:bubble.Visibility-eq 'Visible')
+  $busy=$noticeActive-or $script:dragging-or $script:menu.IsOpen-or $editing-or $script:audioDialogOpen-or ($script:music-and $script:music.mode-in @('loading','opening','playing'))-or ($script:systemRhythm-and $script:systemRhythm.Enabled)-or ($script:bubble.Visibility-eq 'Visible')
   if(Test-WidgetAutoQuoteDue $Now ([bool]$script:window.IsVisible) ([bool]$busy)){
     Show-GeminiQuote -Automatic
     $script:autoQuoteUntil=$Now+8000

@@ -25,6 +25,7 @@ function Set-GeminiSystemRhythm([bool]$Enabled,[switch]$Synthetic) {
   $script:window.UpdateLayout()
   if(!$script:avatar.Source){$script:avatar.Source=$script:images[($script:prefs.view+'-idle')]}
   $script:rhythmAnchor=[GeminiMusicAnchor]::new();$script:rhythmAnchor.Widget=$script:owner.Handle
+  $original=[GeminiNiangNative]::Frame($script:owner.Handle.ToInt64());$script:rhythmAnchor.X=$original.left;$script:rhythmAnchor.Y=$original.top
   $move=[Delegate]::CreateDelegate([System.Action[int,int]],$script:rhythmAnchor,'Move')
   $colors=[Windows.Media.Color[]]@('#B79BE1','#8ED9E8','#F0A6CF'|ForEach-Object{[Windows.Media.ColorConverter]::ConvertFromString($_)})
   try{
@@ -32,6 +33,15 @@ function Set-GeminiSystemRhythm([bool]$Enabled,[switch]$Synthetic) {
     $script:systemRhythm.HostFrame=[Delegate]::CreateDelegate([System.Func[int[]]],$script:rhythmAnchor,'HostFrame')
     Update-GeminiSystemRhythm
   }catch{Stop-GeminiSystemRhythm;Set-GeminiBubble (!$script:prefs.collapsed) -Transient;throw}
+}
+function Get-GeminiRhythmDiagnostics {
+  $scope=[GeminiMusicDpiScope]::new()
+  try{
+    $alpha=[GeminiMusicVisual]::AlphaBounds($script:avatar.Source,$script:avatar.Width,$script:avatar.Height)
+    $left=$script:avatar.PointToScreen([Windows.Point]::new($alpha.Left,$alpha.Top));$right=$script:avatar.PointToScreen([Windows.Point]::new($alpha.Right,$alpha.Bottom))
+    $work=[GeminiNiangNative]::WorkArea([int](($left.X+$right.X)/2),[int]$right.Y)
+    return @{capturesSystemAudio=$script:systemRhythm.CapturesSystemAudio;figure=@{left=$left.X;top=$left.Y;right=$right.X;bottom=$right.Y};work=@{left=$work.Left;top=$work.Top;right=$work.Right;bottom=$work.Bottom}}
+  }finally{$scope.Dispose()}
 }
 function Invoke-GeminiSystemRhythm {
   if(Test-GeminiSystemRhythm){Stop-GeminiSystemRhythm;return}
