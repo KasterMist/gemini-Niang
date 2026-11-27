@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-27",
+  "commit": "e18600483347b2d9446f48c826d01187118d97a4",
+  "archive": "D:/Project/gemini-Niang-release-e186004/gemini-niang-v0.4.0-windows-source.zip",
+  "bytes": 51715369,
+  "sha256": "8ADA8B69CA283524E99F3ED9043F70D8301C53EC98D3F3501D4B24DF48EF8346",
+  "files": 422,
+  "tests": {
+    "command": "npm test",
+    "exitCode": 0,
+    "passed": 63,
+    "failed": 0
+  },
+  "checks": {
+    "finalSourcePresent": true,
+    "allArchiveBlobsVerified": true,
+    "extractedDesktopCheckOnly": true,
+    "repeatBuildSameSha256": true,
+    "conflictingArchivePreserved": true,
+    "realSystemCaptureActivated": false,
+    "realMouseThrowPassed": false
+  },
+  "ci": {
+    "geminiRun": "https://github.com/KasterMist/gemini-Niang/actions/runs/46010194264",
+    "status": "completed",
+    "conclusion": "success",
+    "windows": "success",
+    "linux": "success",
+    "artifact": "gemini-windows-source"
+  }
+}

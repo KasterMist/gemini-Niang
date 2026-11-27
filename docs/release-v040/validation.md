@@ -25,7 +25,15 @@ ZIP 保留上游源代码用于溯源，不是纯运行时安装包或已编译 
 - `npm test`：63/63，退出 0；原始输出见 `test-output.txt`。包含已有不采集音频的原生合成集成测试。
 - 首次执行中文脚本名不匹配：Windows PowerShell 5.1 将无 BOM UTF-8 脚本误读为本地编码；新增 PS1 保存为 UTF-8 BOM 后修复。
 - 首次 Node 子进程测试 `Get-FileHash` 不可用；改用 .NET 流式 SHA256，解压测试也使用 .NET ZipFile，不依赖该环境下缺失的模块命令。没有安装 Python 或修改系统模块路径。
-- 额外验证/最终打包以提交后的证据为准，见同目录生成记录。
+- 功能提交 `e18600483347b2d9446f48c826d01187118d97a4` 提交后再次执行 `npm test`：63/63、退出0，最终原始输出已更新至 `test-output.txt`。最终包逐文件核对成功；见 `build-record.json`。
+- GitHub [Gemini CI](https://github.com/KasterMist/gemini-Niang/actions/runs/46010194264) 对上述提交完成且成功，Windows/Linux job 均成功；Windows 的打包与 artifact 上传步骤成功，`gemini-windows-source` artifact 已存在。此结论不代表保留的上游 macOS 工作流已通过。
+
+## 最终本地产物
+
+- 路径：`D:\Project\gemini-Niang-release-e186004\gemini-niang-v0.4.0-windows-source.zip`
+- 51,715,369 字节；422 个文件；源码提交 e186004。
+- SHA256：`8ADA8B69CA283524E99F3ED9043F70D8301C53EC98D3F3501D4B24DF48EF8346`。
+- 同目录 `.sha256.txt` 与 `.manifest.json` 已重新打开核对。上述压缩包包含功能提交时的文档；之后的证据补充提交不改运行时代码。可复现指同一 Git/压缩工具链，不保证不同 Git/zlib 版本产生相同压缩字节。
 
 ## 原始版本与恢复
 

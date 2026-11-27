@@ -113,7 +113,7 @@ npm run build:character
 ## 开发版打包
 
 在 Windows 仓库目录运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Build-GeminiRelease.ps1`。
-产物位于 `dist/gemini/`：Gemini 专用源码 ZIP、SHA256 及逐文件校验清单。需要 Git，默认只打包 **HEAD 已提交版本**，不包含未提交修改；可用 `-SourceRef` 指定提交，用 `-OutputDirectory` 指定独立输出目录。相同提交重复打包校验和一致；已有不同内容的同名包会被保留并报错，不会覆盖。
+产物位于 `dist/gemini/`：Gemini 专用源码 ZIP、SHA256 及逐文件校验清单。需要 Git，默认只打包 **HEAD 已提交版本**，不包含未提交修改；可用 `-SourceRef` 指定提交，用 `-OutputDirectory` 指定独立输出目录。同一 Git/压缩工具链下，相同提交重复打包校验和一致；已有不同内容的同名包会被保留并报错，不会覆盖。
 
 这是完整源码开发包，不是预编译安装程序：解压后运行 `安装Gemini娘.cmd`，本机编译 GUI 宿主。仍保留上游源码作溯源，**不要误运行 `安装GPT娘.cmd`**。打包不注册插件、不启动挂件、不下载 CLI、不启用监听。Gemini CI 只上传构建 artifact，不自动发布 Release；保留的 Codex 自动发布任务仅允许在原上游仓库执行。
 
