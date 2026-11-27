@@ -94,7 +94,8 @@ jobs:
           path: dist/*-macos-universal.zip
           if-no-files-found: error
   publish:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    # This is the preserved GPT-Niang/Codex publisher, not the Gemini publisher.
+    if: github.repository == 'T7moris/GPT-Niang' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: [windows, macos]
     runs-on: ubuntu-latest
     timeout-minutes: 10

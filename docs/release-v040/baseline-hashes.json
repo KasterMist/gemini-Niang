@@ -1,0 +1,8 @@
+{
+  "baseline": "bcae2c6ba04c4b564fbc532263c56e25039818f2",
+  "files": {
+    "README.md": "d56dcae4c28aa733d69417dce7e7b2c20dbe0de7255b6d4d85457bc1ba97157e",
+    ".github/workflows/release.yml": "93371bcd1fcc016fc06b774211b7a5a66c149d7aaa218aff4f8c504baee993ad",
+    ".github/workflows/character-assets.yml": "4aefe27569c05146c5f6a5d2bd9bdb47ba96a6b4f4d7b7381b0c5dff1d700c93"
+  }
+}
